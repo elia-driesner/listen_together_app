@@ -5,60 +5,60 @@ import 'package:listen_together_app/global_widgets/widgets.dart';
 import 'dart:io' show Platform;
 
 import 'package:listen_together_app/pages/home/home.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '/data/user_data.dart';
 import 'package:listen_together_app/pages/auth/auth.dart';
 
-import 'package:listen_together_app/pages/auth/utils/user_prefrences.dart';
-
-class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPage();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPage extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmationPasswordController = TextEditingController();
   final auth = Authentication();
 
   Widget? loadingIndicator;
   String errorMessage = "";
 
-  void login({required String email, required String password}) async {
+  void confirmEmail(
+      {required String email,
+      required String password,
+      required String confirmationPassword}) async {
     errorMessage = "";
-
+    if (password.length <= 5 || confirmationPassword.length <= 5) {
+      errorMessage = "Password is too short";
+      setState(() => {errorMessage = errorMessage});
+    } else if (password != confirmationPassword) {
+      errorMessage = "Passwords do not match";
+      setState(() => {errorMessage = errorMessage});
+    }
     if (email.length == 0) {
       errorMessage = "Please enter a valid email";
       setState(() => {errorMessage = errorMessage});
-    } else if (password.length <= 5) {
-      errorMessage = "Password too short";
-      setState(() => {errorMessage = errorMessage});
-    } else {
+    }
+    if (errorMessage == '') {
       if (Platform.isAndroid) {
         loadingIndicator = CircularProgressIndicator();
       } else {
         loadingIndicator = CupertinoActivityIndicator(radius: 18);
       }
       setState(() => {loadingIndicator});
-      Map apiReturn = await auth.SignIn(email.toLowerCase(), password);
-      if (apiReturn['error_message'] == '') {
-        user_data = apiReturn['user_data'] as Map;
-        jwt = apiReturn['tokens'];
-        await UserSimplePreferences.setUserData(user_data);
-        await UserSimplePreferences.setTokens(jwt);
+      String emailValidation = await auth.checkEmail(email.toLowerCase());
+      if (emailValidation == 'User found') {
+        setState(() =>
+            {errorMessage = 'Account already exists', loadingIndicator = null});
+      } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Homepage(),
+            builder: (context) =>
+                CreateAccPage(email: email, password: password),
           ),
         );
-      } else {
-        setState(() => {
-              errorMessage = apiReturn['error_message'],
-              loadingIndicator = null
-            });
       }
     }
   }
@@ -83,14 +83,14 @@ class _LoginPageState extends State<LoginPage> {
                 margin: EdgeInsets.fromLTRB(
                     0, (MediaQuery.of(context).size.height * 0.02), 0, 0),
                 child: Text(
-                  'Login',
+                  'Register',
                   style: TextStyle(
                       color: Theme.of(context).primaryColorLight,
                       fontSize: (MediaQuery.of(context).size.width * 0.09)),
                 )),
             Container(
               margin: EdgeInsets.fromLTRB(
-                  0, (MediaQuery.of(context).size.height * 0.12), 0, 0),
+                  0, (MediaQuery.of(context).size.height * 0.05), 0, 0),
               child: InputForm(
                 size: [
                   (MediaQuery.of(context).size.width * 0.8).toDouble(),
@@ -121,6 +121,22 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Container(
+              margin: EdgeInsets.fromLTRB(
+                  0, (MediaQuery.of(context).size.height * 0.02), 0, 0),
+              child: InputForm(
+                size: [
+                  (MediaQuery.of(context).size.width * 0.8).toDouble(),
+                  (MediaQuery.of(context).size.height * 0.06).toDouble()
+                ],
+                text: "Confirm Password",
+                controller: confirmationPasswordController,
+                obscureText: true,
+                isPassword: true,
+                prefixIcon: Icon(Icons.lock_outlined,
+                    color: Theme.of(context).primaryColorDark),
+              ),
+            ),
+            Container(
                 margin: EdgeInsets.fromLTRB(
                     0, (MediaQuery.of(context).size.height * 0.04), 0, 0),
                 child: loadingIndicator == null
@@ -129,10 +145,12 @@ class _LoginPageState extends State<LoginPage> {
                           (MediaQuery.of(context).size.width * 0.8).toDouble(),
                           (MediaQuery.of(context).size.height * 0.07).toDouble()
                         ],
-                        'Login',
-                        () => login(
+                        'Continue',
+                        () => confirmEmail(
                             email: emailController.text,
-                            password: passwordController.text),
+                            password: passwordController.text,
+                            confirmationPassword:
+                                confirmationPasswordController.text),
                       )
                     : loadingIndicator),
             Container(
@@ -151,31 +169,23 @@ class _LoginPageState extends State<LoginPage> {
                                 (MediaQuery.of(context).size.width * 0.042)))),
             Container(
                 margin: EdgeInsets.fromLTRB(
-                    0, (MediaQuery.of(context).size.height * 0.01), 0, 0),
-                child: Text('Forgot Password?',
+                    0, (MediaQuery.of(context).size.height * 0.001), 0, 0),
+                child: GestureDetector(
+                  onTap: () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginPage(),
+                      ),
+                    )
+                  },
+                  child: Text(
+                    'Already have an Account?',
                     style: TextStyle(
                         color: Theme.of(context).primaryColorLight,
-                        fontSize:
-                            (MediaQuery.of(context).size.width * 0.042)))),
-            Container(
-                margin: EdgeInsets.fromLTRB(
-                    0, (MediaQuery.of(context).size.height * 0.003), 0, 0),
-                child: GestureDetector(
-                    onTap: () => {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RegisterPage(),
-                            ),
-                          )
-                        },
-                    child: Text(
-                      'Dont have an Account?',
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColorLight,
-                          fontSize:
-                              (MediaQuery.of(context).size.width * 0.042)),
-                    )))
+                        fontSize: (MediaQuery.of(context).size.width * 0.042)),
+                  ),
+                ))
           ],
         )));
   }

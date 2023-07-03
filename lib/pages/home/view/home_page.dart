@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '/data/user_data.dart';
 import '/pages/auth/auth.dart';
+import 'package:listen_together_app/pages/auth/utils/user_prefrences.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -10,8 +12,10 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  void checkLogin() {
-    if (user_data == null) {
+  void checkLogin(context) async {
+    var userData = await UserSimplePreferences.getUserData();
+    var tokens = await UserSimplePreferences.getTokens();
+    if (userData == null) {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
@@ -19,15 +23,16 @@ class _HomepageState extends State<Homepage> {
           transitionDuration: Duration.zero,
         ),
       );
+    } else {
+      user_data = userData as Map;
+      jwt = tokens as Map;
     }
   }
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () async {
-      checkLogin();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkLogin(context));
   }
 
   @override
