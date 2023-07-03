@@ -20,7 +20,8 @@ class MyApp extends StatelessWidget {
         primaryColorDark: const Color.fromARGB(255, 36, 36, 36),
         primaryColorLight: const Color.fromARGB(255, 240, 240, 240),
         primaryColor: const Color.fromARGB(255, 255, 255, 255),
-        backgroundColor: const Color.fromARGB(255, 15, 15, 15),
+        backgroundColor: const Color(0xff191414),
+        focusColor: const Color(0xff1DB954),
         textSelectionTheme: const TextSelectionThemeData(
             selectionHandleColor: Color.fromARGB(80, 36, 36, 36),
             selectionColor: Color.fromARGB(80, 36, 36, 36)),

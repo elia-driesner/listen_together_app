@@ -41,11 +41,6 @@ class _InputFormState extends State<InputForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-            offset: const Offset(5, 5),
-            color: Theme.of(context).primaryColorLight)
-      ], borderRadius: BorderRadius.circular(15)),
       child: SizedBox(
         width: widget.size[0],
         height: widget.size[1],
@@ -59,9 +54,8 @@ class _InputFormState extends State<InputForm> {
               prefixIcon: widget.prefixIcon ?? null,
               prefixText: widget.prefixText ?? null,
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
-                      width: 2, color: Theme.of(context).primaryColorDark)),
+                borderRadius: BorderRadius.circular(15),
+              ),
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide(

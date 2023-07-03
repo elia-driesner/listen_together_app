@@ -16,7 +16,6 @@ class _HomepageState extends State<Homepage> {
     await UserSimplePreferences.init();
     var userData = await UserSimplePreferences.getUserData();
     var tokens = await UserSimplePreferences.getTokens();
-    debugPrint(userData.toString());
     if (userData == null) {
       Navigator.pushReplacement(
         context,

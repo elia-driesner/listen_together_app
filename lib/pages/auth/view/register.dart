@@ -79,18 +79,21 @@ class _RegisterPage extends State<RegisterPage> {
                       width: (MediaQuery.of(context).size.width * 0.6),
                       height: (MediaQuery.of(context).size.height * 0.25))),
             ),
-            Container(
-                margin: EdgeInsets.fromLTRB(
-                    0, (MediaQuery.of(context).size.height * 0.02), 0, 0),
-                child: Text(
-                  'Register',
-                  style: TextStyle(
-                      color: Theme.of(context).primaryColorLight,
-                      fontSize: (MediaQuery.of(context).size.width * 0.09)),
-                )),
+            SizedBox(
+              width: (MediaQuery.of(context).size.width * 0.8).toDouble(),
+              child: Container(
+                  margin: EdgeInsets.fromLTRB(
+                      5, (MediaQuery.of(context).size.height * 0.02), 0, 0),
+                  child: Text(
+                    'Register',
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColorLight,
+                        fontSize: (MediaQuery.of(context).size.width * 0.09)),
+                  )),
+            ),
             Container(
               margin: EdgeInsets.fromLTRB(
-                  0, (MediaQuery.of(context).size.height * 0.05), 0, 0),
+                  0, (MediaQuery.of(context).size.height * 0.02), 0, 0),
               child: InputForm(
                 size: [
                   (MediaQuery.of(context).size.width * 0.8).toDouble(),
@@ -138,12 +141,13 @@ class _RegisterPage extends State<RegisterPage> {
             ),
             Container(
                 margin: EdgeInsets.fromLTRB(
-                    0, (MediaQuery.of(context).size.height * 0.04), 0, 0),
+                    0, (MediaQuery.of(context).size.height * 0.03), 0, 0),
                 child: loadingIndicator == null
-                    ? WhiteButton(
+                    ? AccentButton(
                         [
                           (MediaQuery.of(context).size.width * 0.8).toDouble(),
-                          (MediaQuery.of(context).size.height * 0.07).toDouble()
+                          (MediaQuery.of(context).size.height * 0.062)
+                              .toDouble()
                         ],
                         'Continue',
                         () => confirmEmail(
@@ -169,23 +173,24 @@ class _RegisterPage extends State<RegisterPage> {
                                 (MediaQuery.of(context).size.width * 0.042)))),
             Container(
                 margin: EdgeInsets.fromLTRB(
-                    0, (MediaQuery.of(context).size.height * 0.001), 0, 0),
+                    0, (MediaQuery.of(context).size.height * 0.04), 0, 0),
                 child: GestureDetector(
-                  onTap: () => {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginPage(),
-                      ),
-                    )
-                  },
-                  child: Text(
-                    'Already have an Account?',
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColorLight,
-                        fontSize: (MediaQuery.of(context).size.width * 0.042)),
-                  ),
-                ))
+                    onTap: () => {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          )
+                        },
+                    child: Text(
+                      'Already have an Account? Sign In',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColorLight,
+                          fontSize:
+                              (MediaQuery.of(context).size.width * 0.042)),
+                    )))
           ],
         )));
   }
