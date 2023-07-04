@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:listen_together_app/models/tokens.dart';
+import 'package:listen_together_app/models/user.dart';
 import 'package:listen_together_app/models/storage_keys.dart';
 
 class SecureStorage {
@@ -35,7 +36,12 @@ class SecureStorage {
 
   // User data
 
-  Future<AuthTokens?> getUserData() async {
-    return await _storage.read(key: userDataKey);
+  Future<UserData?> getUserData() async {
+    return await UserData.readFromStorage();
   }
 }
+
+// TODO
+// Add write to storage functions for tokens and user data
+// Update login and register pages to write data using secure storage
+// Make functions in login and register smaller
