@@ -61,7 +61,7 @@ class AuthTokens {
     return AuthTokens(spotifyTokens, userTokens);
   }
 
-  Future<void> clearStorage() async {
+  static Future<void> clearStorage() async {
     final storage = new FlutterSecureStorage();
     await storage.delete(
       key: spotifyTokenKeys['access_token'],

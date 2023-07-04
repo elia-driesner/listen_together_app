@@ -39,6 +39,10 @@ class SecureStorage {
         spotifyTokenValues: spotifyTokens, userTokenValues: userTokens);
   }
 
+  static Future<void> clearTokens() async {
+    await AuthTokens.clearStorage();
+  }
+
   // User data
 
   static Future<UserData?> getUserData() async {
@@ -47,6 +51,10 @@ class SecureStorage {
 
   static Future<void> setUserData(userData) async {
     await UserData.saveToStorage(userData);
+  }
+
+  static Future<void> clearUserData() async {
+    await UserData.clearStorage();
   }
 }
 

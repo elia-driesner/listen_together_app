@@ -13,7 +13,11 @@ class UserData {
     return (json.encode(userData));
   }
 
-  static Map deserialize(userData) {
+  static Map? deserialize(userData) {
+    if (userData == null) {
+      return (null);
+    }
+    var decodedData = json.decode(userData);
     return (json.decode(userData));
   }
 
@@ -31,13 +35,12 @@ class UserData {
     var userData;
     userData = await storage.read(key: userDataKey);
     userData = deserialize(userData);
-    debugPrint(userData.toString());
     if (userData == null) return null;
 
     return UserData(userData);
   }
 
-  Future<void> clearStorage() async {
+  static Future<void> clearStorage() async {
     final storage = new FlutterSecureStorage();
     await storage.delete(
       key: userDataKey,
