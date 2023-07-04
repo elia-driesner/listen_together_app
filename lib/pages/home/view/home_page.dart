@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '/data/user_data.dart';
 import '/pages/auth/auth.dart';
-import 'package:listen_together_app/pages/auth/utils/user_prefrences.dart';
+import 'package:listen_together_app/services/user_prefrences.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});

@@ -4,12 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:authentication/authentication.dart';
-import 'package:listen_together_app/global_widgets/widgets.dart';
+import 'package:listen_together_app/widgets/widgets.dart';
 import '/data/user_data.dart';
 import 'package:listen_together_app/pages/home/home.dart';
 
 import 'package:listen_together_app/pages/auth/auth.dart';
-import 'package:listen_together_app/pages/auth/utils/user_prefrences.dart';
+import 'package:listen_together_app/services/user_prefrences.dart';
 
 class CreateAccPage extends StatefulWidget {
   CreateAccPage({super.key, required this.email, required this.password});
