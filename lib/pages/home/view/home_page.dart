@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '/data/user_data.dart';
 import '/pages/auth/auth.dart';
-import 'package:listen_together_app/services/user_prefrences.dart';
+import 'package:listen_together_app/services/secure_storage.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -13,10 +13,9 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   void checkLogin(context) async {
-    await UserSimplePreferences.init();
-    await UserSimplePreferences.deleteData();
-    var userData = await UserSimplePreferences.getUserData();
-    var tokens = await UserSimplePreferences.getTokens();
+    await SecureStorage.init();
+    var userData = await SecureStorage.getUserTokens();
+    var tokens = await SecureStorage.getUserTokens();
     if (userData == null) {
       Navigator.pushReplacement(
         context,

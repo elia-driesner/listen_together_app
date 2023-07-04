@@ -1,17 +1,17 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:listen_together_app/services/spotify_auth.dart';
+import 'package:listen_together_app/models/storage_keys.dart';
 
 class AuthTokens {
   AuthTokens(this.spotifyTokens, this.userTokens);
 
-  Map spotifyTokens = {"access_token": "", "refresh_token": ""};
-  Map userTokens = {"access_token": "", "refresh_token": ""};
-
-  Map spotifyTokenKeys = {
+  Map spotifyTokens;
+  Map userTokens;
+  static Map spotifyTokenKeys = {
     "access_token": "spotify_access_token",
     "refresh_token": "spotify_refresh_token"
   };
-  Map userTokenKeys = {
+  static Map userTokenKeys = {
     "access_token": "user_acccess_token",
     "refresh_token": "user_refresh_token"
   };
@@ -40,12 +40,18 @@ class AuthTokens {
     }
   }
 
-  Future<AuthTokens?> readFromStorage() async {
+  static Future<AuthTokens?> readFromStorage() async {
     final storage = new FlutterSecureStorage();
+    Map spotifyTokens = {};
+    Map userTokens = {};
     spotifyTokens['access_token'] =
         await storage.read(key: spotifyTokenKeys['access_token']);
     spotifyTokens['refresh_token'] =
         await storage.read(key: spotifyTokenKeys['refresh_token']);
+    userTokens['access_token'] =
+        await storage.read(key: userTokenKeys['access_token']);
+    userTokens['refresh_token'] =
+        await storage.read(key: userTokenKeys['refresh_token']);
     if (spotifyTokens['access_token'] == null ||
         spotifyTokens['refresh_token'] == null ||
         userTokens['access_token'] == null ||
@@ -76,7 +82,7 @@ class AuthTokens {
 
     // final tokens =
     //     await SpotifyAuthApi.getNewTokens(originalTokens: savedTokens);
-    final tokens = true;
+    const tokens = true;
     if (tokens) {
       await saveToStorage(spotifyTokenValues: tokens);
     }
