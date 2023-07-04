@@ -14,6 +14,7 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   void checkLogin(context) async {
     await UserSimplePreferences.init();
+    await UserSimplePreferences.deleteData();
     var userData = await UserSimplePreferences.getUserData();
     var tokens = await UserSimplePreferences.getTokens();
     if (userData == null) {

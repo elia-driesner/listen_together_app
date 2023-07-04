@@ -28,7 +28,7 @@ class Authentication {
       decodedToken = jsonDecode(utf8.decode(tokenResp.bodyBytes)) as Map;
       if (decodedToken['access'] != null) {
         var userDataResp = await client.post(
-          Uri.parse('${serverUrl}api/db/getuser/'),
+          Uri.parse('${serverUrl}api/db/login/'),
           headers: {"Authorization": "Bearer " + decodedToken["access"]},
           body: json.encode({'email': email, 'password': password}),
         );
