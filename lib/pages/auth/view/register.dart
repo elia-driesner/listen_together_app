@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:authentication/authentication.dart';
-import 'package:listen_together_app/global_widgets/widgets.dart';
+import 'package:listen_together_app/widgets/widgets.dart';
 import 'dart:io' show Platform;
 
 import 'package:listen_together_app/pages/home/home.dart';
