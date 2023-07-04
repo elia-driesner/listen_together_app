@@ -16,7 +16,8 @@ class AuthTokens {
     "refresh_token": "user_refresh_token"
   };
 
-  Future<void> saveToStorage({spotifyTokenValues, userTokenValues}) async {
+  static Future<void> saveToStorage(
+      {spotifyTokenValues, userTokenValues}) async {
     try {
       final storage = new FlutterSecureStorage();
       if (spotifyTokenValues) {

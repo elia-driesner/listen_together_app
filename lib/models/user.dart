@@ -1,15 +1,26 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class UserData {
   UserData(this.userData);
 
   Map userData;
-  static String userDataKey = userDataKey;
+  static String userDataKey = 'user_data';
 
-  Future<void> saveToStorage(userData) async {
+  static String serialize(userData) {
+    return (json.encode(userData));
+  }
+
+  static Map deserialize(userData) {
+    return (json.decode(userData));
+  }
+
+  static Future<void> saveToStorage(userData) async {
     try {
       final storage = new FlutterSecureStorage();
-      await storage.write(key: userDataKey, value: userData);
+      await storage.write(key: userDataKey, value: serialize(userData));
     } catch (e) {
       print(e);
     }
@@ -17,8 +28,10 @@ class UserData {
 
   static Future<UserData?> readFromStorage() async {
     final storage = new FlutterSecureStorage();
-    Map userData;
-    userData = await storage.read(key: userDataKey) as Map;
+    var userData;
+    userData = await storage.read(key: userDataKey);
+    userData = deserialize(userData);
+    debugPrint(userData.toString());
     if (userData == null) return null;
 
     return UserData(userData);

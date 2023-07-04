@@ -30,14 +30,23 @@ class SecureStorage {
     }
   }
 
-  Future<AuthTokens?> getAuthTokens() async {
+  static Future<AuthTokens?> getAuthTokens() async {
     return await AuthTokens.readFromStorage();
+  }
+
+  static Future<void> setTokens(spotifyTokens, userTokens) async {
+    await AuthTokens.saveToStorage(
+        spotifyTokenValues: spotifyTokens, userTokenValues: userTokens);
   }
 
   // User data
 
-  Future<UserData?> getUserData() async {
+  static Future<UserData?> getUserData() async {
     return await UserData.readFromStorage();
+  }
+
+  static Future<void> setUserData(userData) async {
+    await UserData.saveToStorage(userData);
   }
 }
 
@@ -45,3 +54,5 @@ class SecureStorage {
 // Add write to storage functions for tokens and user data
 // Update login and register pages to write data using secure storage
 // Make functions in login and register smaller
+
+// if the data returns null always make one instance if secure storage and pass it to all functions

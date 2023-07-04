@@ -14,8 +14,9 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   void checkLogin(context) async {
     await SecureStorage.init();
-    var userData = await SecureStorage.getUserTokens();
-    var tokens = await SecureStorage.getUserTokens();
+    await SecureStorage.setUserData({'test': true});
+    var userData = await SecureStorage.getUserData();
+    var tokens = await SecureStorage.getAuthTokens();
     if (userData == null) {
       Navigator.pushReplacement(
         context,
@@ -25,7 +26,7 @@ class _HomepageState extends State<Homepage> {
         ),
       );
     } else {
-      user_data = userData as Map;
+      user_data = userData;
       jwt = tokens as Map;
     }
   }
