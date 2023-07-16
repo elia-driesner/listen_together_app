@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:authentication/authentication.dart';
+import 'package:listen_together_app/models/tokens.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'dart:io' show Platform;
 
 import 'package:listen_together_app/pages/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:listen_together_app/services/secure_storage.dart';
 import '/data/user_data.dart';
 import 'package:listen_together_app/pages/auth/auth.dart';
 
@@ -45,9 +47,10 @@ class _LoginPageState extends State<LoginPage> {
       Map apiReturn = await auth.SignIn(email.toLowerCase(), password);
       if (apiReturn['error_message'] == '') {
         user_data = apiReturn['user_data'] as Map;
+        user_data['password'] = password;
         jwt = apiReturn['tokens'];
-        await UserSimplePreferences.setUserData(user_data);
-        await UserSimplePreferences.setTokens(jwt);
+        await SecureStorage.setUserData(user_data);
+        await AuthTokens.saveToStorage(userTokenValues: jwt);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

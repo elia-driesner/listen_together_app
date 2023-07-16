@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:listen_together_app/models/tokens.dart';
+import 'package:listen_together_app/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '/data/user_data.dart';
 import '/pages/auth/auth.dart';
@@ -14,10 +16,13 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   void checkLogin(context) async {
     await SecureStorage.init();
+    await AuthTokens.init(SecureStorage.getStorage()['storage']);
     await SecureStorage.clearUserData();
-    var userData = await SecureStorage.getUserData();
-    var tokens = await SecureStorage.getAuthTokens();
-    if (userData == null) {
+    var _user_data = await UserData.readFromStorage();
+    var _tokens = await AuthTokens.readJWT();
+    debugPrint(_user_data.toString());
+    debugPrint(_tokens.toString());
+    if (_user_data == null) {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
@@ -26,8 +31,8 @@ class _HomepageState extends State<Homepage> {
         ),
       );
     } else {
-      user_data = userData;
-      jwt = tokens as Map;
+      user_data = _user_data;
+      jwt = _tokens as Map;
     }
   }
 
