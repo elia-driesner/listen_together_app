@@ -4,9 +4,13 @@ import 'package:listen_together_app/models/user.dart';
 import 'package:listen_together_app/models/storage_keys.dart';
 
 class SecureStorage {
-  static late var _storage;
+  static late var storage;
 
-  static Future init() async => _storage = const FlutterSecureStorage();
+  static Future init() async => storage = const FlutterSecureStorage();
+
+  static Map getStorage() {
+    return ({'storage': storage});
+  }
 
   // Tokens
 
@@ -39,6 +43,14 @@ class SecureStorage {
         spotifyTokenValues: spotifyTokens, userTokenValues: userTokens);
   }
 
+  static Future<void> setAuthToken(userTokens) async {
+    await AuthTokens.saveToStorage(userTokenValues: userTokens);
+  }
+
+  static Future<void> setSpotifyToken(spotifyTokens) async {
+    await AuthTokens.saveToStorage(spotifyTokenValues: spotifyTokens);
+  }
+
   static Future<void> clearTokens() async {
     await AuthTokens.clearStorage();
   }
@@ -64,3 +76,5 @@ class SecureStorage {
 // Make functions in login and register smaller
 
 // if the data returns null always make one instance if secure storage and pass it to all functions
+
+// make functions work everywhere and not just in test 
