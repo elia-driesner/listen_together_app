@@ -7,7 +7,10 @@ class UserData {
   UserData(this.userData);
 
   Map userData;
+  static var _storage;
   static String userDataKey = 'user_data';
+
+  static Future init(storage) async => _storage = storage;
 
   static String serialize(userData) {
     return (json.encode(userData));
@@ -23,17 +26,15 @@ class UserData {
 
   static Future<void> saveToStorage(userData) async {
     try {
-      final storage = new FlutterSecureStorage();
-      await storage.write(key: userDataKey, value: serialize(userData));
+      await _storage.write(key: userDataKey, value: serialize(userData));
     } catch (e) {
       print(e);
     }
   }
 
   static Future<UserData?> readFromStorage() async {
-    final storage = new FlutterSecureStorage();
     var userData;
-    userData = await storage.read(key: userDataKey);
+    userData = await _storage.read(key: userDataKey);
     userData = deserialize(userData);
     if (userData == null) return null;
 
@@ -41,8 +42,7 @@ class UserData {
   }
 
   static Future<void> clearStorage() async {
-    final storage = new FlutterSecureStorage();
-    await storage.delete(
+    await _storage.delete(
       key: userDataKey,
     );
   }

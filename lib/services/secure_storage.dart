@@ -6,10 +6,19 @@ import 'package:listen_together_app/models/storage_keys.dart';
 class SecureStorage {
   static late var storage;
 
-  static Future init() async => storage = const FlutterSecureStorage();
+  static Future init() async {
+    storage = const FlutterSecureStorage();
+    await AuthTokens.init(storage);
+    await UserData.init(storage);
+  }
 
   static Map getStorage() {
     return ({'storage': storage});
+  }
+
+  static Future<void> clearData() async {
+    await UserData.clearStorage();
+    await AuthTokens.clearStorage();
   }
 
   // Tokens
@@ -36,6 +45,10 @@ class SecureStorage {
 
   static Future<AuthTokens?> getAuthTokens() async {
     return await AuthTokens.readFromStorage();
+  }
+
+  static Future<Map?> getJWT() async {
+    return await AuthTokens.readJWT();
   }
 
   static Future<void> setTokens(spotifyTokens, userTokens) async {

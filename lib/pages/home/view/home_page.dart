@@ -16,11 +16,10 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   void checkLogin(context) async {
     await SecureStorage.init();
-    await AuthTokens.init(SecureStorage.getStorage()['storage']);
-    await SecureStorage.clearUserData();
-    var _user_data = await UserData.readFromStorage();
-    var _tokens = await AuthTokens.readJWT();
-    debugPrint(_user_data.toString());
+    // await SecureStorage.clearData();
+    var _user_data = await SecureStorage.getUserData();
+    var _tokens = await SecureStorage.getJWT();
+    debugPrint(_user_data?.userData.toString());
     debugPrint(_tokens.toString());
     if (_user_data == null) {
       Navigator.pushReplacement(
@@ -31,8 +30,10 @@ class _HomepageState extends State<Homepage> {
         ),
       );
     } else {
-      user_data = _user_data;
-      jwt = _tokens as Map;
+      setState(() {
+        user_data = _user_data.userData['data'];
+        jwt = _tokens as Map;
+      });
     }
   }
 
@@ -44,6 +45,10 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: const Text('homepage')));
+    return Scaffold(
+        body: SafeArea(
+            child: user_data != null
+                ? Text(user_data['email'].toString())
+                : Text('loading...')));
   }
 }

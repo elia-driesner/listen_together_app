@@ -26,19 +26,19 @@ class AuthTokens {
       if (spotifyTokenValues != null) {
         await _storage.write(
             key: spotifyTokenKeys['access_token'],
-            value: spotifyTokenValues['access_token']);
+            value: spotifyTokenValues['access']);
         await _storage.write(
             key: spotifyTokenKeys['refresh_token'],
-            value: spotifyTokenValues['refresh_token']);
+            value: spotifyTokenValues['refresh']);
       }
 
       if (userTokenValues != null) {
         await _storage.write(
             key: userTokenKeys['access_token'],
-            value: userTokenValues['access_token']);
+            value: userTokenValues['access']);
         await _storage.write(
             key: userTokenKeys['refresh_token'],
-            value: userTokenValues['refresh_token']);
+            value: userTokenValues['refresh']);
       }
     } catch (e) {
       debugPrint('token write exception:');
@@ -71,7 +71,6 @@ class AuthTokens {
         await _storage.read(key: userTokenKeys['access_token']);
     userTokens['refresh_token'] =
         await _storage.read(key: userTokenKeys['refresh_token']);
-    debugPrint(userTokens.toString());
     if (userTokens['access_token'] == null ||
         userTokens['refresh_token'] == null) return null;
 
