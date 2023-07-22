@@ -75,11 +75,13 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Container(
               margin: EdgeInsets.fromLTRB(
-                  0, (MediaQuery.of(context).size.height * 0.06), 0, 0),
+                  0, (MediaQuery.of(context).size.height * 0.02), 0, 0),
               child: Center(
                   child: Text('Listen Together',
                       style: TextStyle(
-                          color: Theme.of(context).primaryColorLight))),
+                          color: Theme.of(context).primaryColorLight,
+                          fontSize:
+                              (MediaQuery.of(context).size.width * 0.06)))),
             ),
             SizedBox(
               width: (MediaQuery.of(context).size.width * 0.8).toDouble(),
@@ -87,10 +89,11 @@ class _LoginPageState extends State<LoginPage> {
                   margin: EdgeInsets.fromLTRB(
                       5, (MediaQuery.of(context).size.height * 0.09), 0, 0),
                   child: Text(
-                    'Login',
+                    'First off, please enter your email adress',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).primaryColorLight,
-                        fontSize: (MediaQuery.of(context).size.width * 0.09)),
+                        fontSize: (MediaQuery.of(context).size.width * 0.055)),
                   )),
             ),
             Container(
@@ -110,22 +113,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.fromLTRB(
-                  0, (MediaQuery.of(context).size.height * 0.02), 0, 0),
-              child: InputForm(
-                size: [
-                  (MediaQuery.of(context).size.width * 0.8).toDouble(),
-                  (MediaQuery.of(context).size.height * 0.06).toDouble()
-                ],
-                text: "Password",
-                controller: passwordController,
-                obscureText: true,
-                isPassword: true,
-                prefixIcon: Icon(Icons.lock_outlined,
-                    color: Theme.of(context).primaryColorDark),
-              ),
-            ),
-            Container(
                 margin: EdgeInsets.fromLTRB(
                     0, (MediaQuery.of(context).size.height * 0.03), 0, 0),
                 child: loadingIndicator == null
@@ -141,16 +128,6 @@ class _LoginPageState extends State<LoginPage> {
                             password: passwordController.text),
                       )
                     : loadingIndicator),
-            SizedBox(
-                width: (MediaQuery.of(context).size.width * 0.8).toDouble(),
-                child: Container(
-                    margin: EdgeInsets.fromLTRB(
-                        5, (MediaQuery.of(context).size.height * 0.01), 0, 0),
-                    child: Text('Forgot Password?',
-                        style: TextStyle(
-                            color: Theme.of(context).primaryColorLight,
-                            fontSize:
-                                (MediaQuery.of(context).size.width * 0.042))))),
             Container(
                 margin: EdgeInsets.fromLTRB(
                     0, (MediaQuery.of(context).size.height * 0.015), 0, 0),
@@ -166,26 +143,6 @@ class _LoginPageState extends State<LoginPage> {
                             color: Theme.of(context).errorColor,
                             fontSize:
                                 (MediaQuery.of(context).size.width * 0.042)))),
-            Container(
-                margin: EdgeInsets.fromLTRB(
-                    0, (MediaQuery.of(context).size.height * 0.04), 0, 0),
-                child: GestureDetector(
-                    onTap: () => {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RegisterPage(),
-                            ),
-                          )
-                        },
-                    child: Text(
-                      'Dont have an Account? Sign Up',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColorLight,
-                          fontSize:
-                              (MediaQuery.of(context).size.width * 0.042)),
-                    )))
           ],
         )));
   }
