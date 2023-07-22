@@ -17,11 +17,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         errorColor: const Color.fromARGB(255, 255, 104, 104),
         indicatorColor: const Color.fromARGB(255, 36, 36, 36),
-        primaryColorDark: const Color.fromARGB(255, 36, 36, 36),
-        primaryColorLight: const Color.fromARGB(255, 240, 240, 240),
-        primaryColor: const Color.fromARGB(255, 255, 255, 255),
-        backgroundColor: const Color(0xff191414),
-        focusColor: const Color(0xff1DB954),
+        primaryColorDark: const Color(0xff080704),
+        primaryColorLight: const Color(0xffE1E1E1),
+        primaryColor: const Color(0xff131416),
+        backgroundColor: const Color(0xff131416),
+        focusColor: const Color(0xffF2C94C),
         textSelectionTheme: const TextSelectionThemeData(
             selectionHandleColor: Color.fromARGB(80, 36, 36, 36),
             selectionColor: Color.fromARGB(80, 36, 36, 36)),
