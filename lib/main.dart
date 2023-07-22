@@ -13,7 +13,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
       theme: ThemeData(
         errorColor: const Color.fromARGB(255, 255, 104, 104),
         indicatorColor: const Color.fromARGB(255, 36, 36, 36),
@@ -23,8 +22,8 @@ class MyApp extends StatelessWidget {
         backgroundColor: const Color(0xff131416),
         focusColor: const Color(0xffF2C94C),
         textSelectionTheme: const TextSelectionThemeData(
-            selectionHandleColor: Color.fromARGB(80, 36, 36, 36),
-            selectionColor: Color.fromARGB(80, 36, 36, 36)),
+            selectionHandleColor: Color.fromARGB(80, 190, 190, 190),
+            selectionColor: Color.fromARGB(80, 225, 225, 225)),
         useMaterial3: true,
       ),
       home: const App(),

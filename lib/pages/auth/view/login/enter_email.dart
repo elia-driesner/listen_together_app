@@ -99,17 +99,13 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               margin: EdgeInsets.fromLTRB(
                   0, (MediaQuery.of(context).size.height * 0.03), 0, 0),
-              child: InputForm(
+              child: BigInput(
                 size: [
                   (MediaQuery.of(context).size.width * 0.8).toDouble(),
-                  (MediaQuery.of(context).size.height * 0.06).toDouble()
+                  (MediaQuery.of(context).size.height * 0.1).toDouble()
                 ],
-                text: "Email",
+                text: "Your Email",
                 controller: emailController,
-                obscureText: false,
-                isPassword: false,
-                prefixIcon: Icon(Icons.email_outlined,
-                    color: Theme.of(context).primaryColorDark),
               ),
             ),
             Container(
