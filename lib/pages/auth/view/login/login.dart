@@ -13,14 +13,14 @@ import 'package:listen_together_app/pages/auth/auth.dart';
 
 import 'package:listen_together_app/services/user_prefrences.dart';
 
-class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+class OLDLoginPage extends StatefulWidget {
+  OLDLoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<OLDLoginPage> createState() => _OLDLoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _OLDLoginPageState extends State<OLDLoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final auth = Authentication();
@@ -175,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => RegisterPage(),
+                              builder: (context) => OldRegisterPage(),
                             ),
                           )
                         },

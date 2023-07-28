@@ -8,14 +8,14 @@ import 'package:listen_together_app/pages/home/home.dart';
 import '/data/user_data.dart';
 import 'package:listen_together_app/pages/auth/auth.dart';
 
-class RegisterPage extends StatefulWidget {
-  RegisterPage({super.key});
+class OldRegisterPage extends StatefulWidget {
+  OldRegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPage();
+  State<OldRegisterPage> createState() => _RegisterPage();
 }
 
-class _RegisterPage extends State<RegisterPage> {
+class _RegisterPage extends State<OldRegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmationPasswordController = TextEditingController();

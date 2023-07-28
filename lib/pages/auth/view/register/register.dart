@@ -13,14 +13,14 @@ import 'package:listen_together_app/pages/auth/auth.dart';
 
 import 'package:listen_together_app/services/user_prefrences.dart';
 
-class PasswordPage extends StatefulWidget {
-  PasswordPage({super.key});
+class RegisterPage extends StatefulWidget {
+  RegisterPage({super.key});
 
   @override
-  State<PasswordPage> createState() => _PasswordPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _PasswordPageState extends State<PasswordPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final auth = Authentication();
 
@@ -88,7 +88,7 @@ class _PasswordPageState extends State<PasswordPage> {
                   margin: EdgeInsets.fromLTRB(
                       5, (MediaQuery.of(context).size.height * 0.09), 0, 0),
                   child: Text(
-                    'To Login please enter your password',
+                    'To create your account please enter a password',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).primaryColorLight,
@@ -136,7 +136,7 @@ class _PasswordPageState extends State<PasswordPage> {
                               (MediaQuery.of(context).size.height * 0.062)
                                   .toDouble()
                             ],
-                            'Login',
+                            'Create Account',
                             () => login(
                                 email: 'admin@gmail.com',
                                 password: passwordController.text),
