@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 class BigInput extends StatelessWidget {
-  BigInput({
-    Key? key,
-    required this.size,
-    required this.text,
-    required this.controller,
-  }) : super(key: key);
+  BigInput(
+      {Key? key,
+      required this.size,
+      required this.text,
+      required this.controller,
+      this.obscureText = false})
+      : super(key: key);
   late List<double> size;
   late String text;
   late var controller;
+  bool obscureText = false;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +20,7 @@ class BigInput extends StatelessWidget {
         width: size[0],
         height: size[1],
         child: TextField(
+          obscureText: obscureText,
           autocorrect: false,
           controller: controller,
           autofocus: true,

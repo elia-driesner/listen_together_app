@@ -21,14 +21,32 @@ class _EmailPageState extends State<EmailPage> {
   String errorMessage = "";
 
   void checkAccount(String email) async {
-    String userExists = await auth.checkEmail(email);
-    debugPrint(userExists);
-    if (userExists == 'User found') {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+    if (email.length == 0) {
+      errorMessage = "Please enter a valid email";
+      setState(() => {errorMessage = errorMessage});
     } else {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => RegisterPage()));
+      if (Platform.isAndroid) {
+        loadingIndicator = CircularProgressIndicator();
+      } else {
+        loadingIndicator = CupertinoActivityIndicator(radius: 18);
+      }
+      errorMessage = '';
+      setState(() => {loadingIndicator, errorMessage});
+    }
+    if (errorMessage == '') {
+      String userExists = await auth.checkEmail(email);
+      if (userExists == 'Server not found, try later again') {
+        setState(() => {
+              errorMessage = 'Server not found, try later again',
+              loadingIndicator = null
+            });
+      } else if (userExists == 'User found') {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => LoginPage(email: email)));
+      } else {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => RegisterPage()));
+      }
     }
   }
 

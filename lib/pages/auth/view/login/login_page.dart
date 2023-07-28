@@ -14,7 +14,8 @@ import 'package:listen_together_app/pages/auth/auth.dart';
 import 'package:listen_together_app/services/user_prefrences.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  String email = '';
+  LoginPage({super.key, required this.email});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -105,6 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
                 text: "Your Password",
                 controller: passwordController,
+                obscureText: true,
               ),
             ),
             Spacer(),
@@ -138,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                             ],
                             'Login',
                             () => login(
-                                email: 'admin@gmail.com',
+                                email: widget.email,
                                 password: passwordController.text),
                           )
                         : loadingIndicator),

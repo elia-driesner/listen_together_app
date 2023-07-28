@@ -125,8 +125,15 @@ class Authentication {
     var validationResp;
     var decodedValidation;
     try {
-      validationResp = await client
-          .get(Uri.parse('${serverUrl}api/db/emailExists/' + email));
+      try {
+        validationResp = await client
+            .get(Uri.parse('${serverUrl}api/db/emailExists/' + email));
+      } on Exception catch (_) {
+        errorMessage = 'Server not found, try later again';
+      }
+      if (errorMessage == 'Server not found, try later again') {
+        return errorMessage;
+      }
       decodedValidation =
           jsonDecode(utf8.decode(validationResp.bodyBytes)) as Map;
       if (decodedValidation['detail'] == 'User found') {
