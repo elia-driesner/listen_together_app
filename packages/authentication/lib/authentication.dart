@@ -61,7 +61,7 @@ class Authentication {
     }
   }
 
-  Future<Map> SignUp(email, password, username, unique_name) async {
+  Future<Map> SignUp(email, password) async {
     email = email.toLowerCase();
     var client = http.Client();
     var errorMessage = '';
@@ -83,12 +83,10 @@ class Authentication {
       var body = {
         "email": email,
         "password": password,
-        "username": username,
-        "unique_name": unique_name
       };
       String encodedBody = jsonEncode(body);
       createUserRequest = await client
-          .post(Uri.parse(serverUrl + 'api/db/createUser/'), body: encodedBody);
+          .post(Uri.parse(serverUrl + 'api/db/register/'), body: encodedBody);
       debugPrint(createUserRequest.body);
       decodedUserRequest =
           jsonDecode(utf8.decode(createUserRequest.bodyBytes)) as Map;
@@ -109,7 +107,7 @@ class Authentication {
         }
         return {
           'error_message': '',
-          'user_data': decodedUserRequest['user'],
+          'user_data': decodedUserRequest,
           'tokens': decodedToken
         };
       } else {

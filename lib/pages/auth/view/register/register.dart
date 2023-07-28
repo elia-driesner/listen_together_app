@@ -14,7 +14,8 @@ import 'package:listen_together_app/pages/auth/auth.dart';
 import 'package:listen_together_app/services/user_prefrences.dart';
 
 class RegisterPage extends StatefulWidget {
-  RegisterPage({super.key});
+  String email = '';
+  RegisterPage({super.key, required this.email});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -27,41 +28,32 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget? loadingIndicator;
   String errorMessage = "";
 
-  void login({required String email, required String password}) async {
+  void createAccount({email, password}) async {
     errorMessage = "";
-
-    if (email.length == 0) {
-      errorMessage = "Please enter a valid email";
-      setState(() => {errorMessage = errorMessage});
-    } else if (password.length <= 5) {
-      errorMessage = "Password too short";
-      setState(() => {errorMessage = errorMessage});
+    Map apiReturn = {};
+    if (Platform.isAndroid) {
+      loadingIndicator = CircularProgressIndicator();
     } else {
-      if (Platform.isAndroid) {
-        loadingIndicator = CircularProgressIndicator();
-      } else {
-        loadingIndicator = CupertinoActivityIndicator(radius: 18);
-      }
-      setState(() => {loadingIndicator});
-      Map apiReturn = await auth.SignIn(email.toLowerCase(), password);
-      if (apiReturn['error_message'] == '') {
-        user_data = apiReturn['user_data'] as Map;
-        user_data['password'] = password;
-        jwt = apiReturn['tokens'];
-        await SecureStorage.setUserData(user_data);
-        await AuthTokens.saveToStorage(userTokenValues: jwt);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Homepage(),
-          ),
-        );
-      } else {
-        setState(() => {
-              errorMessage = apiReturn['error_message'],
-              loadingIndicator = null
-            });
-      }
+      loadingIndicator = CupertinoActivityIndicator(radius: 18);
+    }
+    setState(() => {loadingIndicator});
+    apiReturn = await auth.SignUp(email, password);
+    if (apiReturn['error_message'] == '') {
+      debugPrint(apiReturn.toString());
+      user_data = apiReturn['user_data'] as Map;
+      jwt = apiReturn['tokens'];
+      user_data['password'] = password;
+      await SecureStorage.setUserData(user_data);
+      await AuthTokens.saveToStorage(userTokenValues: jwt);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Homepage(),
+        ),
+      );
+    } else {
+      setState(() =>
+          {errorMessage = apiReturn['error_message'], loadingIndicator = null});
     }
   }
 
@@ -105,6 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
                 text: "Your Password",
                 controller: passwordController,
+                obscureText: true,
               ),
             ),
             Spacer(),
@@ -137,8 +130,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   .toDouble()
                             ],
                             'Create Account',
-                            () => login(
-                                email: 'admin@gmail.com',
+                            () => createAccount(
+                                email: widget.email,
                                 password: passwordController.text),
                           )
                         : loadingIndicator),

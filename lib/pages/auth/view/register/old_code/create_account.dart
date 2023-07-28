@@ -58,7 +58,7 @@ class _CreateAccPageState extends State<CreateAccPage> {
       }
       setState(() => {loadingIndicator});
       uniqueName = '@$uniqueName';
-      apiReturn = await auth.SignUp(email, password, username, uniqueName);
+      apiReturn = await auth.SignUp(email, password);
       if (apiReturn['error_message'] == '') {
         user_data = apiReturn['user_data'] as Map;
         jwt = apiReturn['tokens'];

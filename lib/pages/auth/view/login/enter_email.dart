@@ -45,7 +45,9 @@ class _EmailPageState extends State<EmailPage> {
             MaterialPageRoute(builder: (context) => LoginPage(email: email)));
       } else {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => RegisterPage()));
+            context,
+            MaterialPageRoute(
+                builder: (context) => RegisterPage(email: email)));
       }
     }
   }
