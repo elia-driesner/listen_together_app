@@ -31,29 +31,39 @@ class _RegisterPageState extends State<RegisterPage> {
   void createAccount({email, password}) async {
     errorMessage = "";
     Map apiReturn = {};
-    if (Platform.isAndroid) {
-      loadingIndicator = CircularProgressIndicator();
+    if (email.length == 0) {
+      errorMessage = "Please enter a valid email";
+      setState(() => {errorMessage = errorMessage});
+    } else if (password.length <= 5) {
+      errorMessage = "Password too short";
+      setState(() => {errorMessage = errorMessage});
     } else {
-      loadingIndicator = CupertinoActivityIndicator(radius: 18);
-    }
-    setState(() => {loadingIndicator});
-    apiReturn = await auth.SignUp(email, password);
-    if (apiReturn['error_message'] == '') {
-      debugPrint(apiReturn.toString());
-      user_data = apiReturn['user_data'] as Map;
-      jwt = apiReturn['tokens'];
-      user_data['password'] = password;
-      await SecureStorage.setUserData(user_data);
-      await AuthTokens.saveToStorage(userTokenValues: jwt);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Homepage(),
-        ),
-      );
-    } else {
-      setState(() =>
-          {errorMessage = apiReturn['error_message'], loadingIndicator = null});
+      if (Platform.isAndroid) {
+        loadingIndicator = CircularProgressIndicator();
+      } else {
+        loadingIndicator = CupertinoActivityIndicator(radius: 18);
+      }
+      setState(() => {loadingIndicator});
+      apiReturn = await auth.SignUp(email, password);
+      if (apiReturn['error_message'] == '') {
+        debugPrint(apiReturn.toString());
+        user_data = apiReturn['user_data'] as Map;
+        jwt = apiReturn['tokens'];
+        user_data['password'] = password;
+        await SecureStorage.setUserData(user_data);
+        await AuthTokens.saveToStorage(userTokenValues: jwt);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Homepage(),
+          ),
+        );
+      } else {
+        setState(() => {
+              errorMessage = apiReturn['error_message'],
+              loadingIndicator = null
+            });
+      }
     }
   }
 
