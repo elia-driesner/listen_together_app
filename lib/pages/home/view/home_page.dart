@@ -25,7 +25,7 @@ class _HomepageState extends State<Homepage> {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => LoginPage(),
+          pageBuilder: (context, animation1, animation2) => EmailPage(),
           transitionDuration: Duration.zero,
         ),
       );

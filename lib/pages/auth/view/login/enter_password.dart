@@ -13,19 +13,57 @@ import 'package:listen_together_app/pages/auth/auth.dart';
 
 import 'package:listen_together_app/services/user_prefrences.dart';
 
-class EmailPage extends StatefulWidget {
-  EmailPage({super.key});
+class PasswordPage extends StatefulWidget {
+  PasswordPage({super.key});
 
   @override
-  State<EmailPage> createState() => _EmailPageState();
+  State<PasswordPage> createState() => _PasswordPageState();
 }
 
-class _EmailPageState extends State<EmailPage> {
-  final emailController = TextEditingController();
+class _PasswordPageState extends State<PasswordPage> {
+  final passwordController = TextEditingController();
   final auth = Authentication();
 
   Widget? loadingIndicator;
   String errorMessage = "";
+
+  void login({required String email, required String password}) async {
+    errorMessage = "";
+
+    if (email.length == 0) {
+      errorMessage = "Please enter a valid email";
+      setState(() => {errorMessage = errorMessage});
+    } else if (password.length <= 5) {
+      errorMessage = "Password too short";
+      setState(() => {errorMessage = errorMessage});
+    } else {
+      if (Platform.isAndroid) {
+        loadingIndicator = CircularProgressIndicator();
+      } else {
+        loadingIndicator = CupertinoActivityIndicator(radius: 18);
+      }
+      setState(() => {loadingIndicator});
+      Map apiReturn = await auth.SignIn(email.toLowerCase(), password);
+      if (apiReturn['error_message'] == '') {
+        user_data = apiReturn['user_data'] as Map;
+        user_data['password'] = password;
+        jwt = apiReturn['tokens'];
+        await SecureStorage.setUserData(user_data);
+        await AuthTokens.saveToStorage(userTokenValues: jwt);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Homepage(),
+          ),
+        );
+      } else {
+        setState(() => {
+              errorMessage = apiReturn['error_message'],
+              loadingIndicator = null
+            });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +88,7 @@ class _EmailPageState extends State<EmailPage> {
                   margin: EdgeInsets.fromLTRB(
                       5, (MediaQuery.of(context).size.height * 0.09), 0, 0),
                   child: Text(
-                    'First off, please enter your email adress',
+                    'To Login please enter your password',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).primaryColorLight,
@@ -65,8 +103,8 @@ class _EmailPageState extends State<EmailPage> {
                   (MediaQuery.of(context).size.width * 0.8).toDouble(),
                   (MediaQuery.of(context).size.height * 0.1).toDouble()
                 ],
-                text: "Your Email",
-                controller: emailController,
+                text: "Your Password",
+                controller: passwordController,
               ),
             ),
             Spacer(),
@@ -98,12 +136,10 @@ class _EmailPageState extends State<EmailPage> {
                               (MediaQuery.of(context).size.height * 0.062)
                                   .toDouble()
                             ],
-                            'Continue',
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PasswordPage()),
-                            ),
+                            'Login',
+                            () => login(
+                                email: 'admin@gmail.com',
+                                password: passwordController.text),
                           )
                         : loadingIndicator),
               ],
@@ -112,6 +148,3 @@ class _EmailPageState extends State<EmailPage> {
         )));
   }
 }
-
-
-// change size dynamically on text
