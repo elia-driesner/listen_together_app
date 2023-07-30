@@ -16,11 +16,14 @@ class SpotifyAPI {
     var scope = 'user-read-private user-read-email';
     final params = {
       'client_id': client_id,
+      'scope': scope,
+      'redirect_uri': redirect_uri,
+      'state': state,
+      'response_type': 'code',
     };
 
-    final Uri url = Uri.parse(url_map['login']);
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
-    }
+    final Uri url = Uri.http('accounts.spotify.com', 'authorize', params);
+    var resp = await launchUrl(url);
+    debugPrint(resp.toString());
   }
 }
