@@ -46,9 +46,14 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
         body: SafeArea(
             child: user_data != null
-                ? Text(user_data['email'].toString())
+                ? Text(
+                    user_data['email'].toString(),
+                    style:
+                        TextStyle(color: Theme.of(context).primaryColorLight),
+                  )
                 : Text('loading...')));
   }
 }
