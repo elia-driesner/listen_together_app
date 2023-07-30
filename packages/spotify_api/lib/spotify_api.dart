@@ -18,9 +18,9 @@ class SpotifyAPI {
       'client_id': client_id,
     };
 
-    var resp =
-        await http.get(Uri.http('accounts.spotify.com', '/authorize?', params));
-    var decodedResp = resp.body;
-    debugPrint(decodedResp.toString());
+    final Uri url = Uri.parse(url_map['login']);
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 }
