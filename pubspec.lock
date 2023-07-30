@@ -332,6 +332,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  spotify_api:
+    dependency: "direct main"
+    description:
+      path: "packages/spotify_api"
+      relative: true
+    source: path
+    version: "1.0.0+1"
   stack_trace:
     dependency: transitive
     description:

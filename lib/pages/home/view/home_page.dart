@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:listen_together_app/models/tokens.dart';
-import 'package:listen_together_app/models/user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '/data/user_data.dart';
 import '/pages/auth/auth.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
+
+import 'package:spotify_api/spotify_api.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -15,12 +14,12 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   void checkLogin(context) async {
+    SpotifyAPI.SignIn();
+
     await SecureStorage.init();
     // await SecureStorage.clearData();
     var _user_data = await SecureStorage.getUserData();
     var _tokens = await SecureStorage.getJWT();
-    debugPrint(_user_data?.userData.toString());
-    debugPrint(_tokens.toString());
     if (_user_data == null) {
       Navigator.pushReplacement(
         context,
