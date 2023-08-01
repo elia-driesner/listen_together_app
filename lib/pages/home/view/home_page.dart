@@ -29,10 +29,17 @@ class _HomepageState extends State<Homepage> {
     } else {
       setState(() {
         user_data = _user_data.userData['data'];
-        debugPrint(user_data['spotify_refresh_token']);
         jwt = _tokens as Map;
       });
-      // SpotifyAPI.SignIn(user_data['uid']);
+      if (user_data['spotify_refresh_token'] == "") {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SpotifyConnectPage(
+                    email: user_data['email'],
+                    password: user_data['password'],
+                    uid: user_data['uid'])));
+      }
     }
   }
 
@@ -48,11 +55,7 @@ class _HomepageState extends State<Homepage> {
         backgroundColor: Theme.of(context).backgroundColor,
         body: SafeArea(
             child: user_data != null
-                ? Text(
-                    user_data['email'].toString(),
-                    style:
-                        TextStyle(color: Theme.of(context).primaryColorLight),
-                  )
+                ? Text(user_data['spotify_refresh_token'].toString())
                 : Text('loading...')));
   }
 }

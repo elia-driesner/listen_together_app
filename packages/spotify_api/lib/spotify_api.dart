@@ -11,7 +11,7 @@ class SpotifyAPI {
     'login': 'https://accounts.spotify.com/authorize?'
   };
 
-  static Future<void> SignIn(uid) async {
+  static Future<bool> SignIn(uid) async {
     var scope = 'user-read-private user-read-email';
     final params = {
       'client_id': client_id,
@@ -23,6 +23,6 @@ class SpotifyAPI {
 
     final Uri url = Uri.http('accounts.spotify.com', 'authorize', params);
     var resp = await launchUrl(url);
-    debugPrint(resp.toString());
+    return resp;
   }
 }
