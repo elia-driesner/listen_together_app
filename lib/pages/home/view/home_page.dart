@@ -14,8 +14,6 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   void checkLogin(context) async {
-    SpotifyAPI.SignIn();
-
     await SecureStorage.init();
     // await SecureStorage.clearData();
     var _user_data = await SecureStorage.getUserData();
@@ -31,8 +29,10 @@ class _HomepageState extends State<Homepage> {
     } else {
       setState(() {
         user_data = _user_data.userData['data'];
+        debugPrint(user_data['spotify_refresh_token']);
         jwt = _tokens as Map;
       });
+      // SpotifyAPI.SignIn(user_data['uid']);
     }
   }
 
