@@ -36,30 +36,29 @@ class _SpotifyConnectPageState extends State<SpotifyConnectPage> {
     }
     setState(() => {loadingIndicator});
 
-    String password = widget.password;
-    String email = widget.email;
-    String uid = widget.uid;
-
-    bool success = await SpotifyAPI.SignIn(uid);
+    bool success = await SpotifyAPI.SignIn(widget.uid);
     if (success) {
       Future.delayed(const Duration(seconds: 1));
-      Map apiReturn = await auth.SignIn(email, password);
+      Map apiReturn = await auth.SignIn(widget.email, widget.password);
       if (apiReturn['error_message'] == '') {
         var user_data = apiReturn['user_data'] as Map;
-        user_data['data']['password'] = password;
+        user_data['data']['password'] = widget.password;
         await SecureStorage.setUserData(user_data);
-        if (user_data['data']['spotify_refresh_token'] != null) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const Homepage()),
-          );
-        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Homepage()),
+        );
       } else {
         setState(() {
           errorMessage = 'Something went wrong';
           loadingIndicator = null;
         });
       }
+    } else {
+      setState(() {
+        errorMessage = 'Something went wrong';
+        loadingIndicator = null;
+      });
     }
   }
 
