@@ -1,28 +1,40 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:authentication/authentication.dart';
+import 'package:listen_together_app/models/tokens.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'dart:io' show Platform;
 
+import 'package:listen_together_app/pages/home/home.dart';
+import 'package:listen_together_app/services/secure_storage.dart';
+import '/data/user_data.dart';
 import 'package:listen_together_app/pages/auth/auth.dart';
 
-class EmailPage extends StatefulWidget {
-  EmailPage({super.key});
+import 'package:listen_together_app/services/user_prefrences.dart';
+
+class LoginPage extends StatefulWidget {
+  String username = '';
+  LoginPage({super.key, required this.username});
 
   @override
-  State<EmailPage> createState() => _EmailPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _EmailPageState extends State<EmailPage> {
-  final emailController = TextEditingController();
+class _LoginPageState extends State<LoginPage> {
+  final passwordController = TextEditingController();
   final auth = Authentication();
 
   Widget? loadingIndicator;
   String errorMessage = "";
 
-  void checkAccount(String email) async {
-    if (email.length == 0) {
-      errorMessage = "Please enter a valid email";
+  void login({required String username, required String password}) async {
+    errorMessage = "";
+
+    if (username.length == 0) {
+      errorMessage = "Please enter a valid username";
+      setState(() => {errorMessage = errorMessage});
+    } else if (password.length <= 5) {
+      errorMessage = "Password too short";
       setState(() => {errorMessage = errorMessage});
     } else {
       if (Platform.isAndroid) {
@@ -30,24 +42,25 @@ class _EmailPageState extends State<EmailPage> {
       } else {
         loadingIndicator = CupertinoActivityIndicator(radius: 18);
       }
-      errorMessage = '';
-      setState(() => {loadingIndicator, errorMessage});
-    }
-    if (errorMessage == '') {
-      String userExists = await auth.checkEmail(email);
-      if (userExists == 'Server not found, try later again') {
+      setState(() => {loadingIndicator});
+      Map apiReturn = await auth.SignIn(username, password);
+      if (apiReturn['error_message'] == '') {
+        user_data = apiReturn['user_data'] as Map;
+        user_data['data']['password'] = password;
+        jwt = apiReturn['tokens'];
+        await SecureStorage.setUserData(user_data);
+        await AuthTokens.saveToStorage(userTokenValues: jwt);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Homepage(),
+          ),
+        );
+      } else {
         setState(() => {
-              errorMessage = 'Server not found, try later again',
+              errorMessage = apiReturn['error_message'],
               loadingIndicator = null
             });
-      } else if (userExists == 'User found') {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => LoginPage(email: email)));
-      } else {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => RegisterPage(email: email)));
       }
     }
   }
@@ -75,7 +88,7 @@ class _EmailPageState extends State<EmailPage> {
                   margin: EdgeInsets.fromLTRB(
                       5, (MediaQuery.of(context).size.height * 0.09), 0, 0),
                   child: Text(
-                    'First off, please enter your email adress',
+                    'To Login please enter your password',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).primaryColorLight,
@@ -90,8 +103,9 @@ class _EmailPageState extends State<EmailPage> {
                   (MediaQuery.of(context).size.width * 0.8).toDouble(),
                   (MediaQuery.of(context).size.height * 0.1).toDouble()
                 ],
-                text: "Your Email",
-                controller: emailController,
+                text: "Your Password",
+                controller: passwordController,
+                obscureText: true,
               ),
             ),
             Spacer(),
@@ -116,13 +130,18 @@ class _EmailPageState extends State<EmailPage> {
                     margin: EdgeInsets.fromLTRB(
                         0, 0, 0, MediaQuery.of(context).size.height * 0.035),
                     child: loadingIndicator == null
-                        ? AccentButton([
-                            (MediaQuery.of(context).size.width * 0.8)
-                                .toDouble(),
-                            (MediaQuery.of(context).size.height * 0.062)
-                                .toDouble()
-                          ], 'Continue',
-                            () => checkAccount(emailController.text))
+                        ? AccentButton(
+                            [
+                              (MediaQuery.of(context).size.width * 0.8)
+                                  .toDouble(),
+                              (MediaQuery.of(context).size.height * 0.062)
+                                  .toDouble()
+                            ],
+                            'Login',
+                            () => login(
+                                username: widget.username,
+                                password: passwordController.text),
+                          )
                         : loadingIndicator),
               ],
             ),
@@ -130,6 +149,3 @@ class _EmailPageState extends State<EmailPage> {
         )));
   }
 }
-
-
-// change size dynamically on text

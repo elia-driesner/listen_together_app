@@ -22,7 +22,7 @@ class _HomepageState extends State<Homepage> {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => EmailPage(),
+          pageBuilder: (context, animation1, animation2) => UsernamePage(),
           transitionDuration: Duration.zero,
         ),
       );
@@ -36,7 +36,7 @@ class _HomepageState extends State<Homepage> {
             context,
             MaterialPageRoute(
                 builder: (context) => SpotifyConnectPage(
-                    email: user_data['email'],
+                    username: user_data['username'],
                     password: user_data['password'],
                     uid: user_data['uid'])));
       }

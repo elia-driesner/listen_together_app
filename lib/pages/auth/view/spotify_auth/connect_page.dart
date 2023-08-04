@@ -10,12 +10,12 @@ import 'package:listen_together_app/pages/home/home.dart';
 import '/pages/auth/auth.dart';
 
 class SpotifyConnectPage extends StatefulWidget {
-  late String email;
+  late String username;
   late String password;
   late String uid;
   SpotifyConnectPage(
       {super.key,
-      required this.email,
+      required this.username,
       required this.password,
       required this.uid});
 
@@ -39,7 +39,7 @@ class _SpotifyConnectPageState extends State<SpotifyConnectPage> {
     bool success = await SpotifyAPI.SignIn(widget.uid);
     if (success) {
       Future.delayed(const Duration(seconds: 1));
-      Map apiReturn = await auth.SignIn(widget.email, widget.password);
+      Map apiReturn = await auth.SignIn(widget.username, widget.password);
       if (apiReturn['error_message'] == '') {
         var user_data = apiReturn['user_data'] as Map;
         user_data['data']['password'] = widget.password;

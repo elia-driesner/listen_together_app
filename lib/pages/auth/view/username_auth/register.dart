@@ -14,8 +14,8 @@ import 'package:listen_together_app/pages/auth/auth.dart';
 import 'package:listen_together_app/services/user_prefrences.dart';
 
 class RegisterPage extends StatefulWidget {
-  String email = '';
-  RegisterPage({super.key, required this.email});
+  String username = '';
+  RegisterPage({super.key, required this.username});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -28,11 +28,11 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget? loadingIndicator;
   String errorMessage = "";
 
-  void createAccount({email, password}) async {
+  void createAccount({username, password}) async {
     errorMessage = "";
     Map apiReturn = {};
-    if (email.length == 0) {
-      errorMessage = "Please enter a valid email";
+    if (username.length == 0) {
+      errorMessage = "Please enter a valid username";
       setState(() => {errorMessage = errorMessage});
     } else if (password.length <= 5) {
       errorMessage = "Password too short";
@@ -44,7 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
         loadingIndicator = CupertinoActivityIndicator(radius: 18);
       }
       setState(() => {loadingIndicator});
-      apiReturn = await auth.SignUp(email, password);
+      apiReturn = await auth.SignUp(username, password);
       if (apiReturn['error_message'] == '') {
         debugPrint(apiReturn.toString());
         user_data = apiReturn['user_data'] as Map;
@@ -141,7 +141,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ],
                             'Create Account',
                             () => createAccount(
-                                email: widget.email,
+                                username: widget.username,
                                 password: passwordController.text),
                           )
                         : loadingIndicator),

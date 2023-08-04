@@ -7,7 +7,7 @@ class Authentication {
   var serverUrl = 'http://127.0.0.1:8000/';
   String errorMessage = '';
 
-  Future<Map> SignIn(email, password) async {
+  Future<Map> SignIn(username, password) async {
     var client = http.Client();
     var decodedToken;
     var decodedUserData;
@@ -24,13 +24,13 @@ class Authentication {
     }
     try {
       var tokenResp = await client.post(Uri.parse(serverUrl + 'api/token/'),
-          body: {'email': email, 'password': password});
+          body: {'username': username, 'password': password});
       decodedToken = jsonDecode(utf8.decode(tokenResp.bodyBytes)) as Map;
       if (decodedToken['access'] != null) {
         var userDataResp = await client.post(
           Uri.parse('${serverUrl}api/db/login/'),
           headers: {"Authorization": "Bearer " + decodedToken["access"]},
-          body: json.encode({'email': email, 'password': password}),
+          body: json.encode({'username': username, 'password': password}),
         );
         decodedUserData =
             jsonDecode(utf8.decode(userDataResp.bodyBytes)) as Map;
@@ -38,7 +38,7 @@ class Authentication {
       } else if (decodedToken['detail'] ==
           'No active account found with the given credentials') {
         var validationResp = await client
-            .get(Uri.parse('${serverUrl}api/db/emailExists/' + email));
+            .get(Uri.parse('${serverUrl}api/db/userExists/' + username));
         var decodedValidation =
             jsonDecode(utf8.decode(validationResp.bodyBytes)) as Map;
         if (decodedValidation['detail'] == 'User found') {
@@ -61,8 +61,8 @@ class Authentication {
     }
   }
 
-  Future<Map> SignUp(email, password) async {
-    email = email.toLowerCase();
+  Future<Map> SignUp(username, password) async {
+    username = username;
     var client = http.Client();
     var errorMessage = '';
     var createUserRequest;
@@ -81,7 +81,7 @@ class Authentication {
     }
     try {
       var body = {
-        "email": email,
+        "username": username,
         "password": password,
       };
       String encodedBody = jsonEncode(body);
@@ -100,7 +100,7 @@ class Authentication {
           }
           iteration++;
           tokenRequest = await client.post(Uri.parse(serverUrl + 'api/token/'),
-              body: {'email': email, 'password': password});
+              body: {'username': username, 'password': password});
           decodedToken = jsonDecode(utf8.decode(tokenRequest.bodyBytes)) as Map;
           debugPrint(decodedToken.toString());
           await Future.delayed(const Duration(seconds: 1));
@@ -118,14 +118,14 @@ class Authentication {
     }
   }
 
-  Future<String> checkEmail(email) async {
+  Future<String> checkUsername(username) async {
     var client = http.Client();
     var validationResp;
     var decodedValidation;
     try {
       try {
         validationResp = await client
-            .get(Uri.parse('${serverUrl}api/db/emailExists/' + email));
+            .get(Uri.parse('${serverUrl}api/db/userExists/' + username));
       } on Exception catch (_) {
         errorMessage = 'Server not found, try later again';
       }
@@ -144,6 +144,6 @@ class Authentication {
     }
   }
 
-  void ChangePassword(email, password) {}
-  void DeleteAcc(email, password) {}
+  void ChangePassword(username, password) {}
+  void DeleteAcc(username, password) {}
 }

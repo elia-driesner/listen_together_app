@@ -1,40 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:authentication/authentication.dart';
-import 'package:listen_together_app/models/tokens.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'dart:io' show Platform;
 
-import 'package:listen_together_app/pages/home/home.dart';
-import 'package:listen_together_app/services/secure_storage.dart';
-import '/data/user_data.dart';
 import 'package:listen_together_app/pages/auth/auth.dart';
 
-import 'package:listen_together_app/services/user_prefrences.dart';
-
-class LoginPage extends StatefulWidget {
-  String email = '';
-  LoginPage({super.key, required this.email});
+class UsernamePage extends StatefulWidget {
+  UsernamePage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<UsernamePage> createState() => _UsernamePageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final passwordController = TextEditingController();
+class _UsernamePageState extends State<UsernamePage> {
+  final usernameController = TextEditingController();
   final auth = Authentication();
 
   Widget? loadingIndicator;
   String errorMessage = "";
 
-  void login({required String email, required String password}) async {
-    errorMessage = "";
-
-    if (email.length == 0) {
-      errorMessage = "Please enter a valid email";
-      setState(() => {errorMessage = errorMessage});
-    } else if (password.length <= 5) {
-      errorMessage = "Password too short";
+  void checkAccount(String username) async {
+    if (username.length == 0) {
+      errorMessage = "Please enter a valid username";
       setState(() => {errorMessage = errorMessage});
     } else {
       if (Platform.isAndroid) {
@@ -42,25 +30,26 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         loadingIndicator = CupertinoActivityIndicator(radius: 18);
       }
-      setState(() => {loadingIndicator});
-      Map apiReturn = await auth.SignIn(email.toLowerCase(), password);
-      if (apiReturn['error_message'] == '') {
-        user_data = apiReturn['user_data'] as Map;
-        user_data['data']['password'] = password;
-        jwt = apiReturn['tokens'];
-        await SecureStorage.setUserData(user_data);
-        await AuthTokens.saveToStorage(userTokenValues: jwt);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Homepage(),
-          ),
-        );
-      } else {
+      errorMessage = '';
+      setState(() => {loadingIndicator, errorMessage});
+    }
+    if (errorMessage == '') {
+      String userExists = await auth.checkUsername(username);
+      if (userExists == 'Server not found, try later again') {
         setState(() => {
-              errorMessage = apiReturn['error_message'],
+              errorMessage = 'Server not found, try later again',
               loadingIndicator = null
             });
+      } else if (userExists == 'User found') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginPage(username: username)));
+      } else {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => RegisterPage(username: username)));
       }
     }
   }
@@ -88,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                   margin: EdgeInsets.fromLTRB(
                       5, (MediaQuery.of(context).size.height * 0.09), 0, 0),
                   child: Text(
-                    'To Login please enter your password',
+                    'First off, please enter your name',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).primaryColorLight,
@@ -103,9 +92,8 @@ class _LoginPageState extends State<LoginPage> {
                   (MediaQuery.of(context).size.width * 0.8).toDouble(),
                   (MediaQuery.of(context).size.height * 0.1).toDouble()
                 ],
-                text: "Your Password",
-                controller: passwordController,
-                obscureText: true,
+                text: "Your Name",
+                controller: usernameController,
               ),
             ),
             Spacer(),
@@ -130,18 +118,13 @@ class _LoginPageState extends State<LoginPage> {
                     margin: EdgeInsets.fromLTRB(
                         0, 0, 0, MediaQuery.of(context).size.height * 0.035),
                     child: loadingIndicator == null
-                        ? AccentButton(
-                            [
-                              (MediaQuery.of(context).size.width * 0.8)
-                                  .toDouble(),
-                              (MediaQuery.of(context).size.height * 0.062)
-                                  .toDouble()
-                            ],
-                            'Login',
-                            () => login(
-                                email: widget.email,
-                                password: passwordController.text),
-                          )
+                        ? AccentButton([
+                            (MediaQuery.of(context).size.width * 0.8)
+                                .toDouble(),
+                            (MediaQuery.of(context).size.height * 0.062)
+                                .toDouble()
+                          ], 'Continue',
+                            () => checkAccount(usernameController.text))
                         : loadingIndicator),
               ],
             ),
@@ -149,3 +132,6 @@ class _LoginPageState extends State<LoginPage> {
         )));
   }
 }
+
+
+// change size dynamically on text
