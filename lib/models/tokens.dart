@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:listen_together_app/services/spotify_auth.dart';
 import 'package:listen_together_app/models/storage_keys.dart';
 
 class AuthTokens {
