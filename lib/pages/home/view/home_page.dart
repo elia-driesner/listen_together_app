@@ -39,8 +39,13 @@ class _HomepageState extends State<Homepage> {
                     password: user_data['password'],
                     uid: user_data['uid'])));
       } else {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => StartPartyPage()));
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => StartPartyPage(),
+            transitionDuration: Duration.zero,
+          ),
+        );
       }
     }
   }

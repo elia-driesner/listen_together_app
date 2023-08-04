@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
+import '/pages/houseparty/houseparty.dart';
 
 class StartPartyPage extends StatelessWidget {
   const StartPartyPage({super.key});
@@ -20,7 +21,30 @@ class StartPartyPage extends StatelessWidget {
                 (MediaQuery.of(context).size.height * 0.062).toDouble()
               ],
               'Start your Party',
-              () => {},
+              () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreatePartyPage(),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+            child: Center(
+              child: AccentButton(
+                [
+                  (MediaQuery.of(context).size.width * 0.8).toDouble(),
+                  (MediaQuery.of(context).size.height * 0.062).toDouble()
+                ],
+                'Join a party',
+                () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreatePartyPage(),
+                  ),
+                ),
+              ),
             ),
           ),
           Spacer(),
