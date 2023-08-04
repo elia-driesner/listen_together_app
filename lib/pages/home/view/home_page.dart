@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import '/data/user_data.dart';
 import '/pages/auth/auth.dart';
+import '/pages/houseparty/houseparty.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
-
-import 'package:spotify_api/spotify_api.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -39,6 +38,9 @@ class _HomepageState extends State<Homepage> {
                     username: user_data['username'],
                     password: user_data['password'],
                     uid: user_data['uid'])));
+      } else {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => StartPartyPage()));
       }
     }
   }
