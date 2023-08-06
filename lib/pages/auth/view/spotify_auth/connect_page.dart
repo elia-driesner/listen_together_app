@@ -39,7 +39,8 @@ class _SpotifyConnectPageState extends State<SpotifyConnectPage> {
     bool success = await SpotifyAPI.SignIn(widget.uid);
     if (success) {
       Future.delayed(const Duration(seconds: 1));
-      Map apiReturn = await auth.SignIn(widget.username, widget.password);
+      Map apiReturn =
+          await Authentication.SignIn(widget.username, widget.password);
       if (apiReturn['error_message'] == '') {
         var user_data = apiReturn['user_data'] as Map;
         user_data['data']['password'] = widget.password;

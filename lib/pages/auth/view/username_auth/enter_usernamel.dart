@@ -34,7 +34,7 @@ class _UsernamePageState extends State<UsernamePage> {
       setState(() => {loadingIndicator, errorMessage});
     }
     if (errorMessage == '') {
-      String userExists = await auth.checkUsername(username);
+      String userExists = await Authentication.checkUsername(username);
       if (userExists == 'Server not found, try later again') {
         setState(() => {
               errorMessage = 'Server not found, try later again',

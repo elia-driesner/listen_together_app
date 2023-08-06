@@ -18,8 +18,8 @@ class _StartPartyPageState extends State<StartPartyPage> {
     if (_user_data != null && _tokens != null) {
       var user_data = _user_data.userData['data'];
       String access_token = _tokens['user_tokens']['access_token'];
-      SpotifyAPI.GetPlayingSong(
-          user_data['username'], user_data['password'], access_token);
+      // SpotifyAPI.GetPlayingSong(
+      //    user_data['username'], user_data['password'], access_token);
     }
   }
 

@@ -28,9 +28,6 @@ class _HomepageState extends State<Homepage> {
         ),
       );
     } else {
-      _tokens = _tokens as Map;
-      var tokens = auth.RenewTokens(_tokens['user_tokens']['refresh_token']);
-      await SecureStorage.setAuthToken({'user_tokens': tokens});
       setState(() {
         user_data = _user_data.userData['data'];
         jwt = _tokens as Map;

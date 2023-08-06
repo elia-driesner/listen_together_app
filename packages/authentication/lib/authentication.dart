@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Authentication {
-  var serverUrl = 'http://127.0.0.1:8000/';
-  String errorMessage = '';
+  static var serverUrl = 'http://127.0.0.1:8000/';
+  static String errorMessage = '';
 
-  Future<Map> SignIn(username, password) async {
+  static Future<Map> SignIn(username, password) async {
     var client = http.Client();
     var decodedToken;
     var decodedUserData;
@@ -61,7 +61,7 @@ class Authentication {
     }
   }
 
-  Future<Map> SignUp(username, password) async {
+  static Future<Map> SignUp(username, password) async {
     username = username;
     var client = http.Client();
     var errorMessage = '';
@@ -118,7 +118,7 @@ class Authentication {
     }
   }
 
-  Future<String> checkUsername(username) async {
+  static Future<String> checkUsername(username) async {
     var client = http.Client();
     var validationResp;
     var decodedValidation;
@@ -144,21 +144,25 @@ class Authentication {
     }
   }
 
-  Future<Map> RenewTokens(refresh_token) async {
-    var client = http.Client();
-    var access_token = await client.post(
-        Uri.parse(serverUrl + 'api/token/refresh/'),
-        body: {'refresh': refresh_token});
-    var decoded_access_token =
-        jsonDecode(utf8.decode(access_token.bodyBytes)) as Map;
-    debugPrint({
-      'access_token': decoded_access_token,
-      'refresh_token': refresh_token
-    }.toString());
-    return {
-      'access_token': decoded_access_token,
-      'refresh_token': refresh_token
-    };
+  // static Future<Map> RenewTokens(refresh_token) async {
+  //   var client = http.Client();
+  //   var access_token = await client.post(
+  //       Uri.parse(serverUrl + 'api/token/refresh/'),
+  //       body: {'refresh': refresh_token});
+  //   var decoded_access_token =
+  //       jsonDecode(utf8.decode(access_token.bodyBytes)) as Map;
+  //   debugPrint({
+  //     'access_token': decoded_access_token,
+  //     'refresh_token': refresh_token
+  //   }.toString());
+  //   return {
+  //     'access_token': decoded_access_token,
+  //     'refresh_token': refresh_token
+  //   };
+  // }
+
+  static Future<Map> RenewData(user_data, tokens) async {
+    return {'data': 'data'};
   }
 
   void ChangePassword(username, password) {}

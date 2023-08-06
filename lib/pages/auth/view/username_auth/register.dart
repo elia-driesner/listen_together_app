@@ -44,7 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
         loadingIndicator = CupertinoActivityIndicator(radius: 18);
       }
       setState(() => {loadingIndicator});
-      apiReturn = await auth.SignUp(username, password);
+      apiReturn = await Authentication.SignUp(username, password);
       if (apiReturn['error_message'] == '') {
         debugPrint(apiReturn.toString());
         user_data = apiReturn['user_data'] as Map;

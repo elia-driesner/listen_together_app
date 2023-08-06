@@ -22,7 +22,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
-  final auth = Authentication();
 
   Widget? loadingIndicator;
   String errorMessage = "";
@@ -43,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         loadingIndicator = CupertinoActivityIndicator(radius: 18);
       }
       setState(() => {loadingIndicator});
-      Map apiReturn = await auth.SignIn(username, password);
+      Map apiReturn = await Authentication.SignIn(username, password);
       if (apiReturn['error_message'] == '') {
         user_data = apiReturn['user_data'] as Map;
         user_data['data']['password'] = password;

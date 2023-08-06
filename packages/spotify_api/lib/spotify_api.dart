@@ -29,9 +29,13 @@ class SpotifyAPI {
 
   static Future<Map> GetPlayingSong(username, password, access_token) async {
     const String url = 'http://127.0.0.1:8000/api/playback/playing_song/';
-    var playing_song = await client.post(Uri.parse(url),
-        body: {'username': username, 'password': password},
-        headers: {"Authorization": "Bearer " + access_token});
+    String encodedBody =
+        jsonEncode({"password": "123456", "username": "Elia Driesner"});
+    var playing_song =
+        await client.post(Uri.parse(url), body: encodedBody, headers: {
+      "Authorization":
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkxMzU3OTc5LCJpYXQiOjE2OTEzNTE1NTUsImp0aSI6ImE3ZjMzMmI0MGNiNDQyODFhMjliYmI4MWY5MmI2NTJjIiwidXNlcl9pZCI6NX0.fSCSHRzjbHTCa8tQHBpLtvLq1XB_pfPUJXzsTdq-Hg4"
+    });
     var dec_playing_song = jsonDecode(utf8.decode(playing_song.bodyBytes));
     debugPrint(dec_playing_song.toString());
     return {'data': 'data'};
