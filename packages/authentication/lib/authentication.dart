@@ -144,6 +144,23 @@ class Authentication {
     }
   }
 
+  Future<Map> RenewTokens(refresh_token) async {
+    var client = http.Client();
+    var access_token = await client.post(
+        Uri.parse(serverUrl + 'api/token/refresh/'),
+        body: {'refresh': refresh_token});
+    var decoded_access_token =
+        jsonDecode(utf8.decode(access_token.bodyBytes)) as Map;
+    debugPrint({
+      'access_token': decoded_access_token,
+      'refresh_token': refresh_token
+    }.toString());
+    return {
+      'access_token': decoded_access_token,
+      'refresh_token': refresh_token
+    };
+  }
+
   void ChangePassword(username, password) {}
   void DeleteAcc(username, password) {}
 }

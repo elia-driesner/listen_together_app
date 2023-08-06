@@ -3,6 +3,7 @@ import '/data/user_data.dart';
 import '/pages/auth/auth.dart';
 import '/pages/houseparty/houseparty.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
+import 'package:authentication/authentication.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -12,6 +13,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  final auth = Authentication();
   void checkLogin(context) async {
     await SecureStorage.init();
     // await SecureStorage.clearData();
@@ -26,6 +28,9 @@ class _HomepageState extends State<Homepage> {
         ),
       );
     } else {
+      _tokens = _tokens as Map;
+      var tokens = auth.RenewTokens(_tokens['user_tokens']['refresh_token']);
+      await SecureStorage.setAuthToken({'user_tokens': tokens});
       setState(() {
         user_data = _user_data.userData['data'];
         jwt = _tokens as Map;

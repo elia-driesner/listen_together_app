@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
@@ -10,9 +9,11 @@ class SpotifyAPI {
   static Map<String, dynamic> url_map = {
     'login': 'https://accounts.spotify.com/authorize?'
   };
+  static var client = http.Client();
 
   static Future<bool> SignIn(uid) async {
-    var scope = 'user-read-private user-read-email';
+    var scope =
+        'user-read-private user-read-playback-state user-modify-playback-state user-read-currently-playing app-remote-control';
     final params = {
       'client_id': client_id,
       'scope': scope,
@@ -24,5 +25,15 @@ class SpotifyAPI {
     final Uri url = Uri.http('accounts.spotify.com', 'authorize', params);
     var resp = await launchUrl(url);
     return resp;
+  }
+
+  static Future<Map> GetPlayingSong(username, password, access_token) async {
+    const String url = 'http://127.0.0.1:8000/api/playback/playing_song/';
+    var playing_song = await client.post(Uri.parse(url),
+        body: {'username': username, 'password': password},
+        headers: {"Authorization": "Bearer " + access_token});
+    var dec_playing_song = jsonDecode(utf8.decode(playing_song.bodyBytes));
+    debugPrint(dec_playing_song.toString());
+    return {'data': 'data'};
   }
 }
