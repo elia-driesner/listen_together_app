@@ -4,6 +4,7 @@ import '/pages/auth/auth.dart';
 import '/pages/houseparty/houseparty.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
 import 'package:authentication/authentication.dart';
+import 'package:listen_together_app/services/data.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -15,41 +16,9 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   final auth = Authentication();
   void checkLogin(context) async {
-    await SecureStorage.init();
+    await Data.init();
     // await SecureStorage.clearData();
-    var _user_data = await SecureStorage.getUserData();
-    var _tokens = await SecureStorage.getJWT();
-    if (_user_data == null) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => UsernamePage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    } else {
-      setState(() {
-        user_data = _user_data.userData['data'];
-        jwt = _tokens as Map;
-      });
-      if (user_data['spotify_refresh_token'] == "") {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SpotifyConnectPage(
-                    username: user_data['username'],
-                    password: user_data['password'],
-                    uid: user_data['uid'])));
-      } else {
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) => StartPartyPage(),
-            transitionDuration: Duration.zero,
-          ),
-        );
-      }
-    }
+    Data.initApp(context);
   }
 
   @override

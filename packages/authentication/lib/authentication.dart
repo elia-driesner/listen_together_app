@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+// import 'package:listen_together_app/services/secure_storage.dart';
 
 class Authentication {
   static var serverUrl = 'http://127.0.0.1:8000/';
@@ -161,8 +162,31 @@ class Authentication {
   //   };
   // }
 
-  static Future<Map> RenewData(user_data, tokens) async {
-    return {'data': 'data'};
+  static Future<Map> RenewData(user_data, refresh_token) async {
+    var client = http.Client();
+    var access_token = await client.post(
+        Uri.parse(serverUrl + 'api/token/refresh/'),
+        body: {'refresh': refresh_token});
+    var decoded_access_token = jsonDecode(utf8.decode(access_token.bodyBytes));
+    decoded_access_token = decoded_access_token['access'];
+    Map<String, String> tokens = {
+      'access_token': decoded_access_token,
+      'refresh_token': refresh_token
+    };
+
+    var userDataResp = await client.post(
+      Uri.parse('${serverUrl}api/db/login/'),
+      headers: {"Authorization": "Bearer " + decoded_access_token},
+      body: json.encode({
+        'username': user_data['username'],
+        'password': user_data['password']
+      }),
+    );
+    var decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
+    decodedUserData = decodedUserData['data'];
+    decodedUserData['password'] = user_data['password'];
+
+    return {'user_data': decodedUserData, 'tokens': tokens};
   }
 
   void ChangePassword(username, password) {}
