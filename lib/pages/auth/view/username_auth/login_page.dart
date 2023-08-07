@@ -47,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
         user_data = apiReturn['user_data'] as Map;
         user_data['data']['password'] = password;
         jwt = apiReturn['tokens'];
-        await SecureStorage.setUserData(user_data);
+        await SecureStorage.setUserData(user_data['data']);
         await AuthTokens.saveToStorage(userTokenValues: jwt);
         Navigator.pushReplacement(
           context,

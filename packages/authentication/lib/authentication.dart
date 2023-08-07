@@ -173,7 +173,7 @@ class Authentication {
       'access_token': decoded_access_token,
       'refresh_token': refresh_token
     };
-
+    debugPrint(user_data['password']);
     var userDataResp = await client.post(
       Uri.parse('${serverUrl}api/db/login/'),
       headers: {"Authorization": "Bearer " + decoded_access_token},
@@ -182,7 +182,7 @@ class Authentication {
         'password': user_data['password']
       }),
     );
-    var decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
+    Map decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
     decodedUserData = decodedUserData['data'];
     decodedUserData['password'] = user_data['password'];
 

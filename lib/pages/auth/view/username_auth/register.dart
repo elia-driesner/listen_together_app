@@ -50,7 +50,7 @@ class _RegisterPageState extends State<RegisterPage> {
         user_data = apiReturn['user_data'] as Map;
         jwt = apiReturn['tokens'];
         user_data['data']['password'] = password;
-        await SecureStorage.setUserData(user_data);
+        await SecureStorage.setUserData(user_data['data']);
         await AuthTokens.saveToStorage(userTokenValues: jwt);
         Navigator.pushReplacement(
           context,
