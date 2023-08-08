@@ -32,8 +32,7 @@ flutter:
   uses-material-design: true
 
   assets:
-      - assets/icons/icon.png
+      - assets/artworks/spotify_connect_page_art.png
       - assets/icons/empty_profile_pic.png
-      - assets/icons/banner_placeholder.png
 
   

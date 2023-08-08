@@ -16,12 +16,10 @@ class Data {
     var tokens;
     if (_user_data != null) {
       user_data = _user_data.userData;
-      debugPrint(user_data.toString());
     }
     if (_tokens != null) {
       tokens = _tokens;
     }
-    // debugPrint({'user_data': user_data, 'tokens': tokens}.toString());
     return {'user_data': user_data, 'tokens': tokens};
   }
 
@@ -48,7 +46,6 @@ class Data {
                     password: user_data['password'],
                     uid: user_data['uid'])));
       } else {
-        debugPrint(user_data['password']);
         await updateData(user_data, tokens);
         Navigator.pushReplacement(
           context,
@@ -64,7 +61,6 @@ class Data {
   static Future<void> updateData(user_data, tokens) async {
     String refresh_token = tokens['user_tokens']['refresh_token'];
     var new_data = await Authentication.RenewData(user_data, refresh_token);
-    debugPrint(new_data['user_data'].toString());
     await SecureStorage.setAuthToken(new_data['tokens']['user_tokens']);
     await SecureStorage.setUserData(new_data['user_data']['data']);
   }

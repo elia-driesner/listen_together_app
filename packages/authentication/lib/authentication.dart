@@ -88,7 +88,6 @@ class Authentication {
       String encodedBody = jsonEncode(body);
       createUserRequest = await client
           .post(Uri.parse(serverUrl + 'api/db/register/'), body: encodedBody);
-      debugPrint(createUserRequest.body);
       decodedUserRequest =
           jsonDecode(utf8.decode(createUserRequest.bodyBytes)) as Map;
       if (decodedUserRequest['error'] == '') {
@@ -103,7 +102,6 @@ class Authentication {
           tokenRequest = await client.post(Uri.parse(serverUrl + 'api/token/'),
               body: {'username': username, 'password': password});
           decodedToken = jsonDecode(utf8.decode(tokenRequest.bodyBytes)) as Map;
-          debugPrint(decodedToken.toString());
           await Future.delayed(const Duration(seconds: 1));
         }
         return {
@@ -173,7 +171,6 @@ class Authentication {
       'access_token': decoded_access_token,
       'refresh_token': refresh_token
     };
-    debugPrint(user_data['password']);
     var userDataResp = await client.post(
       Uri.parse('${serverUrl}api/db/login/'),
       headers: {"Authorization": "Bearer " + decoded_access_token},
@@ -184,8 +181,6 @@ class Authentication {
     );
     Map decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
     decodedUserData = decodedUserData;
-    debugPrint(user_data['password'].toString());
-    debugPrint(decodedUserData.toString());
     decodedUserData['data']['password'] = user_data['password'];
 
     return {'user_data': decodedUserData, 'tokens': tokens};
