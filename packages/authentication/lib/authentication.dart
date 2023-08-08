@@ -35,7 +35,7 @@ class Authentication {
         );
         decodedUserData =
             jsonDecode(utf8.decode(userDataResp.bodyBytes)) as Map;
-        decodedUserData['password'] = 'hidden';
+        decodedUserData['password'] = password;
       } else if (decodedToken['detail'] ==
           'No active account found with the given credentials') {
         var validationResp = await client
@@ -183,8 +183,10 @@ class Authentication {
       }),
     );
     Map decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
-    decodedUserData = decodedUserData['data'];
-    decodedUserData['password'] = user_data['password'];
+    decodedUserData = decodedUserData;
+    debugPrint(user_data['password'].toString());
+    debugPrint(decodedUserData.toString());
+    decodedUserData['data']['password'] = user_data['password'];
 
     return {'user_data': decodedUserData, 'tokens': tokens};
   }

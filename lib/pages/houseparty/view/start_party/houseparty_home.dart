@@ -16,13 +16,18 @@ class _StartPartyPageState extends State<StartPartyPage> {
     var _user_data = await SecureStorage.getUserData();
     var _tokens = await SecureStorage.getJWT();
     if (_user_data != null && _tokens != null) {
-      var user_data = _user_data.userData['data'];
+      var user_data = _user_data.userData;
       String access_token = _tokens['user_tokens']['access_token'];
-      // SpotifyAPI.GetPlayingSong(
-      //    user_data['username'], user_data['password'], access_token);
+      SpotifyAPI.GetPlayingSong(
+          user_data['username'], user_data['password'], access_token);
     }
   }
 
+  void clearStorage() async {
+    await SecureStorage.clearData();
+  }
+
+  @override
   void initState() {
     getPlayingSong();
   }
@@ -67,6 +72,15 @@ class _StartPartyPageState extends State<StartPartyPage> {
                   ),
                 ),
               ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+            child: Center(
+              child: AccentButton([
+                (MediaQuery.of(context).size.width * 0.8).toDouble(),
+                (MediaQuery.of(context).size.height * 0.062).toDouble()
+              ], 'Logout', () => clearStorage()),
             ),
           ),
           Spacer(),

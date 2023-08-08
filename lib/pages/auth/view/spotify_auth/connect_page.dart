@@ -30,9 +30,9 @@ class _SpotifyConnectPageState extends State<SpotifyConnectPage> {
 
   void connectSpotify() async {
     if (Platform.isAndroid) {
-      loadingIndicator = CircularProgressIndicator();
+      loadingIndicator = const CircularProgressIndicator();
     } else {
-      loadingIndicator = CupertinoActivityIndicator(radius: 18);
+      loadingIndicator = const CupertinoActivityIndicator(radius: 18);
     }
     setState(() => {loadingIndicator});
 
@@ -44,7 +44,7 @@ class _SpotifyConnectPageState extends State<SpotifyConnectPage> {
       if (apiReturn['error_message'] == '') {
         var user_data = apiReturn['user_data'] as Map;
         user_data['data']['password'] = widget.password;
-        await SecureStorage.setUserData(user_data);
+        await SecureStorage.setUserData(user_data['data']);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const Homepage()),
@@ -80,7 +80,7 @@ class _SpotifyConnectPageState extends State<SpotifyConnectPage> {
                           fontSize:
                               (MediaQuery.of(context).size.width * 0.06)))),
             ),
-            Spacer(),
+            const Spacer(),
             SizedBox(
               width: (MediaQuery.of(context).size.width * 0.8).toDouble(),
               child: Column(
@@ -120,29 +120,28 @@ class _SpotifyConnectPageState extends State<SpotifyConnectPage> {
                         ? Text('$errorMessage',
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Theme.of(context).errorColor,
+                                color: Theme.of(context).colorScheme.error,
                                 fontSize: (MediaQuery.of(context).size.width *
                                     0.042)))
                         : Text('',
                             style: TextStyle(
-                                color: Theme.of(context).errorColor,
+                                color: Theme.of(context).colorScheme.error,
                                 fontSize: (MediaQuery.of(context).size.width *
                                     0.042)))),
                 Container(
                     margin: EdgeInsets.fromLTRB(
                         0, 0, 0, MediaQuery.of(context).size.height * 0.05),
-                    child: loadingIndicator == null
-                        ? AccentButton(
-                            [
-                              (MediaQuery.of(context).size.width * 0.8)
-                                  .toDouble(),
-                              (MediaQuery.of(context).size.height * 0.062)
-                                  .toDouble()
-                            ],
-                            'Connect Spotify',
-                            () => connectSpotify(),
-                          )
-                        : loadingIndicator),
+                    child: loadingIndicator ??
+                        AccentButton(
+                          [
+                            (MediaQuery.of(context).size.width * 0.8)
+                                .toDouble(),
+                            (MediaQuery.of(context).size.height * 0.062)
+                                .toDouble()
+                          ],
+                          'Connect Spotify',
+                          () => connectSpotify(),
+                        )),
               ],
             ),
           ],

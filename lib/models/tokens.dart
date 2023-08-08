@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:listen_together_app/models/storage_keys.dart';
 
 class AuthTokens {
   AuthTokens(this.spotifyTokens, this.userTokens);
@@ -41,7 +39,6 @@ class AuthTokens {
       }
     } catch (e) {
       debugPrint('token write exception:');
-      print(e);
     }
   }
 

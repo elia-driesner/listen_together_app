@@ -7,7 +7,7 @@ import 'dart:io' show Platform;
 import 'package:listen_together_app/pages/auth/auth.dart';
 
 class UsernamePage extends StatefulWidget {
-  UsernamePage({super.key});
+  const UsernamePage({super.key});
 
   @override
   State<UsernamePage> createState() => _UsernamePageState();
@@ -21,14 +21,14 @@ class _UsernamePageState extends State<UsernamePage> {
   String errorMessage = "";
 
   void checkAccount(String username) async {
-    if (username.length == 0) {
+    if (username.isEmpty) {
       errorMessage = "Please enter a valid username";
-      setState(() => {errorMessage = errorMessage});
+      setState(() => errorMessage = errorMessage);
     } else {
       if (Platform.isAndroid) {
-        loadingIndicator = CircularProgressIndicator();
+        loadingIndicator = const CircularProgressIndicator();
       } else {
-        loadingIndicator = CupertinoActivityIndicator(radius: 18);
+        loadingIndicator = const CupertinoActivityIndicator(radius: 18);
       }
       errorMessage = '';
       setState(() => {loadingIndicator, errorMessage});
@@ -96,36 +96,34 @@ class _UsernamePageState extends State<UsernamePage> {
                 controller: usernameController,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Column(
               children: [
                 Container(
                     margin: EdgeInsets.fromLTRB(
                         0, 0, 0, (MediaQuery.of(context).size.height * 0.02)),
                     child: errorMessage != ''
-                        ? Text('$errorMessage',
+                        ? Text(errorMessage,
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Theme.of(context).errorColor,
+                                color: Theme.of(context).colorScheme.error,
                                 fontSize: (MediaQuery.of(context).size.width *
                                     0.042)))
                         : Text('',
                             style: TextStyle(
-                                color: Theme.of(context).errorColor,
+                                color: Theme.of(context).colorScheme.error,
                                 fontSize: (MediaQuery.of(context).size.width *
                                     0.042)))),
                 Container(
                     margin: EdgeInsets.fromLTRB(
                         0, 0, 0, MediaQuery.of(context).size.height * 0.035),
-                    child: loadingIndicator == null
-                        ? AccentButton([
-                            (MediaQuery.of(context).size.width * 0.8)
-                                .toDouble(),
-                            (MediaQuery.of(context).size.height * 0.062)
-                                .toDouble()
-                          ], 'Continue',
-                            () => checkAccount(usernameController.text))
-                        : loadingIndicator),
+                    child: loadingIndicator ??
+                        AccentButton([
+                          (MediaQuery.of(context).size.width * 0.8).toDouble(),
+                          (MediaQuery.of(context).size.height * 0.062)
+                              .toDouble()
+                        ], 'Continue',
+                            () => checkAccount(usernameController.text))),
               ],
             ),
           ],

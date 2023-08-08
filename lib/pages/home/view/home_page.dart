@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import '/data/user_data.dart';
-import '/pages/auth/auth.dart';
-import '/pages/houseparty/houseparty.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
+import '/data/user_data.dart';
 import 'package:authentication/authentication.dart';
 import 'package:listen_together_app/services/data.dart';
 
@@ -34,6 +32,6 @@ class _HomepageState extends State<Homepage> {
         body: SafeArea(
             child: user_data != null
                 ? Text(user_data['spotify_refresh_token'].toString())
-                : Text('loading...')));
+                : const Text('loading...')));
   }
 }

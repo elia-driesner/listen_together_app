@@ -66,6 +66,6 @@ class Data {
     var new_data = await Authentication.RenewData(user_data, refresh_token);
     debugPrint(new_data['user_data'].toString());
     await SecureStorage.setAuthToken(new_data['tokens']['user_tokens']);
-    await SecureStorage.setUserData(new_data['user_data']);
+    await SecureStorage.setUserData(new_data['user_data']['data']);
   }
 }

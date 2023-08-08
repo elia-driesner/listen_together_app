@@ -1,8 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 class UserData {
   UserData(this.userData);
 
@@ -20,7 +17,6 @@ class UserData {
     if (userData == null) {
       return (null);
     }
-    var decodedData = json.decode(userData);
     return (json.decode(userData));
   }
 

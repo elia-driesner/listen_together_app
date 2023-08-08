@@ -8,9 +8,6 @@ import 'dart:io' show Platform;
 import 'package:listen_together_app/pages/home/home.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
 import '/data/user_data.dart';
-import 'package:listen_together_app/pages/auth/auth.dart';
-
-import 'package:listen_together_app/services/user_prefrences.dart';
 
 class LoginPage extends StatefulWidget {
   String username = '';
@@ -29,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   void login({required String username, required String password}) async {
     errorMessage = "";
 
-    if (username.length == 0) {
+    if (username.isEmpty) {
       errorMessage = "Please enter a valid username";
       setState(() => {errorMessage = errorMessage});
     } else if (password.length <= 5) {
@@ -37,11 +34,11 @@ class _LoginPageState extends State<LoginPage> {
       setState(() => {errorMessage = errorMessage});
     } else {
       if (Platform.isAndroid) {
-        loadingIndicator = CircularProgressIndicator();
+        loadingIndicator = const CircularProgressIndicator();
       } else {
-        loadingIndicator = CupertinoActivityIndicator(radius: 18);
+        loadingIndicator = const CupertinoActivityIndicator(radius: 18);
       }
-      setState(() => {loadingIndicator});
+      setState(() => loadingIndicator);
       Map apiReturn = await Authentication.SignIn(username, password);
       if (apiReturn['error_message'] == '') {
         user_data = apiReturn['user_data'] as Map;
@@ -114,34 +111,33 @@ class _LoginPageState extends State<LoginPage> {
                     margin: EdgeInsets.fromLTRB(
                         0, 0, 0, (MediaQuery.of(context).size.height * 0.02)),
                     child: errorMessage != ''
-                        ? Text('$errorMessage',
+                        ? Text(errorMessage,
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Theme.of(context).errorColor,
+                                color: Theme.of(context).colorScheme.error,
                                 fontSize: (MediaQuery.of(context).size.width *
                                     0.042)))
                         : Text('',
                             style: TextStyle(
-                                color: Theme.of(context).errorColor,
+                                color: Theme.of(context).colorScheme.error,
                                 fontSize: (MediaQuery.of(context).size.width *
                                     0.042)))),
                 Container(
                     margin: EdgeInsets.fromLTRB(
                         0, 0, 0, MediaQuery.of(context).size.height * 0.035),
-                    child: loadingIndicator == null
-                        ? AccentButton(
-                            [
-                              (MediaQuery.of(context).size.width * 0.8)
-                                  .toDouble(),
-                              (MediaQuery.of(context).size.height * 0.062)
-                                  .toDouble()
-                            ],
-                            'Login',
-                            () => login(
-                                username: widget.username,
-                                password: passwordController.text),
-                          )
-                        : loadingIndicator),
+                    child: loadingIndicator ??
+                        AccentButton(
+                          [
+                            (MediaQuery.of(context).size.width * 0.8)
+                                .toDouble(),
+                            (MediaQuery.of(context).size.height * 0.062)
+                                .toDouble()
+                          ],
+                          'Login',
+                          () => login(
+                              username: widget.username,
+                              password: passwordController.text),
+                        )),
               ],
             ),
           ],

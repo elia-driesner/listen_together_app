@@ -6,12 +6,8 @@ import 'package:listen_together_app/widgets/widgets.dart';
 import 'dart:io' show Platform;
 
 import 'package:listen_together_app/pages/home/home.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
 import '/data/user_data.dart';
-import 'package:listen_together_app/pages/auth/auth.dart';
-
-import 'package:listen_together_app/services/user_prefrences.dart';
 
 class RegisterPage extends StatefulWidget {
   String username = '';
@@ -33,17 +29,17 @@ class _RegisterPageState extends State<RegisterPage> {
     Map apiReturn = {};
     if (username.length == 0) {
       errorMessage = "Please enter a valid username";
-      setState(() => {errorMessage = errorMessage});
+      setState(() => errorMessage = errorMessage);
     } else if (password.length <= 5) {
       errorMessage = "Password too short";
-      setState(() => {errorMessage = errorMessage});
+      setState(() => errorMessage = errorMessage);
     } else {
       if (Platform.isAndroid) {
-        loadingIndicator = CircularProgressIndicator();
+        loadingIndicator = const CircularProgressIndicator();
       } else {
-        loadingIndicator = CupertinoActivityIndicator(radius: 18);
+        loadingIndicator = const CupertinoActivityIndicator(radius: 18);
       }
-      setState(() => {loadingIndicator});
+      setState(() => loadingIndicator);
       apiReturn = await Authentication.SignUp(username, password);
       if (apiReturn['error_message'] == '') {
         debugPrint(apiReturn.toString());
@@ -110,41 +106,41 @@ class _RegisterPageState extends State<RegisterPage> {
                 obscureText: true,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Column(
               children: [
                 Container(
                     margin: EdgeInsets.fromLTRB(
                         0, 0, 0, (MediaQuery.of(context).size.height * 0.02)),
                     child: errorMessage != ''
-                        ? Text('$errorMessage',
+                        ? Text(errorMessage,
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Theme.of(context).errorColor,
+                                color: Theme.of(context).colorScheme.error,
                                 fontSize: (MediaQuery.of(context).size.width *
                                     0.042)))
                         : Text('',
                             style: TextStyle(
+                                // ignore: deprecated_member_use
                                 color: Theme.of(context).errorColor,
                                 fontSize: (MediaQuery.of(context).size.width *
                                     0.042)))),
                 Container(
                     margin: EdgeInsets.fromLTRB(
                         0, 0, 0, MediaQuery.of(context).size.height * 0.035),
-                    child: loadingIndicator == null
-                        ? AccentButton(
-                            [
-                              (MediaQuery.of(context).size.width * 0.8)
-                                  .toDouble(),
-                              (MediaQuery.of(context).size.height * 0.062)
-                                  .toDouble()
-                            ],
-                            'Create Account',
-                            () => createAccount(
-                                username: widget.username,
-                                password: passwordController.text),
-                          )
-                        : loadingIndicator),
+                    child: loadingIndicator ??
+                        AccentButton(
+                          [
+                            (MediaQuery.of(context).size.width * 0.8)
+                                .toDouble(),
+                            (MediaQuery.of(context).size.height * 0.062)
+                                .toDouble()
+                          ],
+                          'Create Account',
+                          () => createAccount(
+                              username: widget.username,
+                              password: passwordController.text),
+                        )),
               ],
             ),
           ],
