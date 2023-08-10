@@ -80,12 +80,16 @@ class _SpotifyConnectPageState extends State<SpotifyConnectPage> {
                           fontSize:
                               (MediaQuery.of(context).size.width * 0.06)))),
             ),
+            Stack(children: []),
             Container(
                 margin: EdgeInsets.fromLTRB(
                     0, (MediaQuery.of(context).size.height * 0.08), 0, 0),
-                child: Image.asset(
-                    fit: BoxFit.cover,
-                    'assets/artworks/spotify_connect_page_art.png')),
+                child: SizedBox(
+                  width: (MediaQuery.of(context).size.width * 1),
+                  child: Image.asset(
+                      fit: BoxFit.cover,
+                      'assets/artworks/spotify_connect_page_art.png'),
+                )),
             const Spacer(),
             SizedBox(
               width: (MediaQuery.of(context).size.width * 0.8).toDouble(),

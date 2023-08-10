@@ -17,6 +17,8 @@ class _HomepageState extends State<Homepage> {
     await Data.init();
     // await SecureStorage.clearData();
     Data.initApp(context);
+    user_data = await SecureStorage.getUserData();
+    debugPrint(user_data.userData.toString());
   }
 
   @override

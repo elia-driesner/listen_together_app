@@ -47,13 +47,13 @@ class Data {
                     uid: user_data['uid'])));
       } else {
         await updateData(user_data, tokens);
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) => StartPartyPage(),
-            transitionDuration: Duration.zero,
-          ),
-        );
+        // Navigator.pushReplacement(
+        //   context,
+        //   PageRouteBuilder(
+        //     pageBuilder: (context, animation1, animation2) => StartPartyPage(),
+        //     transitionDuration: Duration.zero,
+        //   ),
+        // );
       }
     }
   }
@@ -61,7 +61,13 @@ class Data {
   static Future<void> updateData(user_data, tokens) async {
     String refresh_token = tokens['user_tokens']['refresh_token'];
     var new_data = await Authentication.RenewData(user_data, refresh_token);
-    await SecureStorage.setAuthToken(new_data['tokens']['user_tokens']);
-    await SecureStorage.setUserData(new_data['user_data']['data']);
+    if (new_data['success']) {
+      await SecureStorage.setAuthToken(new_data['tokens']['user_tokens']);
+      await SecureStorage.setUserData(new_data['user_data']['data']);
+    } else {
+      debugPrint('no connection data.dart:58');
+      await SecureStorage.setAuthToken(user_data);
+      await SecureStorage.setUserData(tokens);
+    }
   }
 }

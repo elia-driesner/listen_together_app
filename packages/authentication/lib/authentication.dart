@@ -162,28 +162,48 @@ class Authentication {
 
   static Future<Map> RenewData(user_data, refresh_token) async {
     var client = http.Client();
-    var access_token = await client.post(
-        Uri.parse(serverUrl + 'api/token/refresh/'),
-        body: {'refresh': refresh_token});
-    var decoded_access_token = jsonDecode(utf8.decode(access_token.bodyBytes));
-    decoded_access_token = decoded_access_token['access'];
-    Map<String, String> tokens = {
-      'access_token': decoded_access_token,
-      'refresh_token': refresh_token
-    };
-    var userDataResp = await client.post(
-      Uri.parse('${serverUrl}api/db/login/'),
-      headers: {"Authorization": "Bearer " + decoded_access_token},
-      body: json.encode({
-        'username': user_data['username'],
-        'password': user_data['password']
-      }),
-    );
-    Map decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
-    decodedUserData = decodedUserData;
-    decodedUserData['data']['password'] = user_data['password'];
+    if (await checkConnection(client)) {
+      var access_token = await client.post(
+          Uri.parse(serverUrl + 'api/token/refresh/'),
+          body: {'refresh': refresh_token});
+      var decoded_access_token =
+          jsonDecode(utf8.decode(access_token.bodyBytes));
+      decoded_access_token = decoded_access_token['access'];
+      Map<String, String> tokens = {
+        'access_token': decoded_access_token,
+        'refresh_token': refresh_token
+      };
+      var userDataResp = await client.post(
+        Uri.parse('${serverUrl}api/db/login/'),
+        headers: {"Authorization": "Bearer " + decoded_access_token},
+        body: json.encode({
+          'username': user_data['username'],
+          'password': user_data['password']
+        }),
+      );
+      Map decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
+      decodedUserData = decodedUserData;
+      decodedUserData['data']['password'] = user_data['password'];
+      return {
+        'error_message': '',
+        'success': true,
+        'user_data': decodedUserData,
+        'tokens': tokens
+      };
+    } else {
+      return {'error_message': 'No Connection', 'success': false};
+    }
+  }
 
-    return {'user_data': decodedUserData, 'tokens': tokens};
+  static Future<bool> checkConnection(client) async {
+    try {
+      var serverResp = await client.get(
+        Uri.parse(serverUrl),
+      );
+    } on Exception catch (_) {
+      return (false);
+    }
+    return (true);
   }
 
   void ChangePassword(username, password) {}

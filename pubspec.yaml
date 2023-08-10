@@ -25,6 +25,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
 
   flutter_lints: ^2.0.0
 
@@ -35,4 +36,9 @@ flutter:
       - assets/artworks/spotify_connect_page_art.png
       - assets/icons/empty_profile_pic.png
 
-  
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/logo/ios.png"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/icons/logo/android.png"
