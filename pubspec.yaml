@@ -35,6 +35,7 @@ flutter:
   assets:
       - assets/artworks/spotify_connect_page_art.png
       - assets/icons/empty_profile_pic.png
+      - assets/icons/logo/ios.png
 
 flutter_launcher_icons:
   android: true

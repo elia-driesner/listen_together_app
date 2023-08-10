@@ -162,7 +162,7 @@ class Authentication {
 
   static Future<Map> RenewData(user_data, refresh_token) async {
     var client = http.Client();
-    if (await checkConnection(client)) {
+    if (await checkConnection(client: client)) {
       var access_token = await client.post(
           Uri.parse(serverUrl + 'api/token/refresh/'),
           body: {'refresh': refresh_token});
@@ -195,13 +195,24 @@ class Authentication {
     }
   }
 
-  static Future<bool> checkConnection(client) async {
+  static Future<bool> checkConnection({client = null}) async {
+    bool dropClient = false;
+    if (client == null) {
+      client = http.Client();
+      dropClient = true;
+    }
     try {
       var serverResp = await client.get(
         Uri.parse(serverUrl),
       );
     } on Exception catch (_) {
+      if (dropClient) {
+        client.close();
+      }
       return (false);
+    }
+    if (dropClient) {
+      client.close();
     }
     return (true);
   }

@@ -12,13 +12,12 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  final auth = Authentication();
   void checkLogin(context) async {
-    await Data.init();
-    // await SecureStorage.clearData();
-    Data.initApp(context);
     user_data = await SecureStorage.getUserData();
     debugPrint(user_data.userData.toString());
+    setState(() {
+      user_data = user_data.userData;
+    });
   }
 
   @override
