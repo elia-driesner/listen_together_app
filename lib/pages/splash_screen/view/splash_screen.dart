@@ -30,16 +30,18 @@ class _SplashScreenState extends State<SplashScreen> {
     bool connection = await Authentication.checkConnection();
     await Data.init();
     if (connection) {
-      Data.initApp(context);
-      var _user_data = await SecureStorage.getUserData();
-      if (_user_data != null) {
-        var user_data = _user_data.userData;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Homepage(),
-          ),
-        );
+      await Data.initApp(context);
+      var data = await Data.readData();
+      var tokens = data['tokens'];
+      var user_data = data['user_data'];
+      debugPrint(data.toString());
+      if (user_data != null) {
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => Homepage(),
+        //   ),
+        // );
       }
     } else {
       setState(() {

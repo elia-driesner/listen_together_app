@@ -20,6 +20,7 @@ class Data {
     if (_tokens != null) {
       tokens = _tokens;
     }
+
     return {'user_data': user_data, 'tokens': tokens};
   }
 
@@ -62,7 +63,8 @@ class Data {
     String refresh_token = tokens['user_tokens']['refresh_token'];
     var new_data = await Authentication.RenewData(user_data, refresh_token);
     if (new_data['success']) {
-      await SecureStorage.setAuthToken(new_data['tokens']['user_tokens']);
+      debugPrint(new_data['tokens'].toString());
+      await SecureStorage.setAuthToken(new_data['tokens']);
       await SecureStorage.setUserData(new_data['user_data']['data']);
     } else {
       debugPrint('no connection data.dart:58');
