@@ -47,7 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
         jwt = apiReturn['tokens'];
         user_data['data']['password'] = password;
         await SecureStorage.setUserData(user_data['data']);
-        await AuthTokens.saveToStorage(userTokenValues: jwt);
+        await SecureStorage.setTokens(jwt);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

@@ -11,17 +11,9 @@ class Data {
 
   static Future<Map> readData() async {
     var _user_data = await SecureStorage.getUserData();
-    var _tokens = await SecureStorage.getJWT();
-    var user_data;
-    var tokens;
-    if (_user_data != null) {
-      user_data = _user_data.userData;
-    }
-    if (_tokens != null) {
-      tokens = _tokens;
-    }
+    var _tokens = await SecureStorage.getTokens();
 
-    return {'user_data': user_data, 'tokens': tokens};
+    return {'user_data': _user_data, 'tokens': _tokens};
   }
 
   static Future<void> initApp(context) async {
@@ -60,15 +52,14 @@ class Data {
   }
 
   static Future<void> updateData(user_data, tokens) async {
-    String refresh_token = tokens['user_tokens']['refresh_token'];
+    String refresh_token = tokens['refresh_token'];
     var new_data = await Authentication.RenewData(user_data, refresh_token);
     if (new_data['success']) {
-      debugPrint(new_data['tokens'].toString());
-      await SecureStorage.setAuthToken(new_data['tokens']);
+      await SecureStorage.setTokens(new_data['tokens']);
       await SecureStorage.setUserData(new_data['user_data']['data']);
     } else {
       debugPrint('no connection data.dart:58');
-      await SecureStorage.setAuthToken(user_data);
+      await SecureStorage.setTokens(user_data);
       await SecureStorage.setUserData(tokens);
     }
   }

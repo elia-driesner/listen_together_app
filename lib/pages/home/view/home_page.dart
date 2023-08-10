@@ -14,9 +14,9 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   void checkLogin(context) async {
     user_data = await SecureStorage.getUserData();
-    // debugPrint(user_data.userData.toString());
+    // debugPrint(user_data.toString());
     setState(() {
-      user_data = user_data.userData;
+      user_data = user_data;
     });
   }
 

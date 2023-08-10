@@ -28,13 +28,13 @@ class UserData {
     }
   }
 
-  static Future<UserData?> readFromStorage() async {
+  static Future<Map?> readFromStorage() async {
     var userData;
     userData = await _storage.read(key: userDataKey);
     userData = deserialize(userData);
     if (userData == null) return null;
 
-    return UserData(userData);
+    return userData;
   }
 
   static Future<void> clearStorage() async {
