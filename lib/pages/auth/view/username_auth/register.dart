@@ -7,7 +7,6 @@ import 'dart:io' show Platform;
 
 import 'package:listen_together_app/pages/home/home.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
-import '/data/user_data.dart';
 
 class RegisterPage extends StatefulWidget {
   String username = '';
@@ -43,8 +42,8 @@ class _RegisterPageState extends State<RegisterPage> {
       apiReturn = await Authentication.SignUp(username, password);
       if (apiReturn['error_message'] == '') {
         debugPrint(apiReturn.toString());
-        user_data = apiReturn['user_data'] as Map;
-        jwt = apiReturn['tokens'];
+        var user_data = apiReturn['user_data'] as Map;
+        var jwt = apiReturn['tokens'];
         user_data['data']['password'] = password;
         await SecureStorage.setUserData(user_data['data']);
         await SecureStorage.setTokens(jwt);

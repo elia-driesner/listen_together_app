@@ -5,6 +5,7 @@ import 'package:authentication/authentication.dart';
 import '../../../services/data.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
 import '../../home/home.dart';
+import 'package:spotify_api/spotify_api.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,14 +35,19 @@ class _SplashScreenState extends State<SplashScreen> {
       var data = await Data.readData();
       var tokens = data['tokens'];
       var user_data = data['user_data'];
-      debugPrint(data.toString());
       if (user_data != null) {
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => Homepage(),
-        //   ),
-        // );
+        var spotify_data = await SpotifyAPI.GetPlayingSong(
+            user_data['username'],
+            user_data['password'],
+            tokens['access_token']);
+        debugPrint(spotify_data.toString());
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Homepage(),
+          ),
+        );
       }
     } else {
       setState(() {

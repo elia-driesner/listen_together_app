@@ -7,7 +7,6 @@ import 'dart:io' show Platform;
 
 import 'package:listen_together_app/pages/home/home.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
-import '/data/user_data.dart';
 
 class LoginPage extends StatefulWidget {
   String username = '';
@@ -41,9 +40,9 @@ class _LoginPageState extends State<LoginPage> {
       setState(() => loadingIndicator);
       Map apiReturn = await Authentication.SignIn(username, password);
       if (apiReturn['error_message'] == '') {
-        user_data = apiReturn['user_data'] as Map;
+        var user_data = apiReturn['user_data'] as Map;
         user_data['data']['password'] = password;
-        jwt = apiReturn['tokens'];
+        var jwt = apiReturn['tokens'];
         await SecureStorage.setUserData(user_data['data']);
         await SecureStorage.setTokens(jwt);
         Navigator.pushReplacement(

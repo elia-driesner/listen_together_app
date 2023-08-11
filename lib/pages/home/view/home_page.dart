@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
-import '/data/user_data.dart';
-import 'package:authentication/authentication.dart';
-import 'package:listen_together_app/services/data.dart';
+import 'package:listen_together_app/widgets/widgets.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -12,8 +10,14 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  Map song_data = {
+    'cover': '',
+    'title': 'Spotify not playing',
+    'artist': '',
+  };
+
   void checkLogin(context) async {
-    user_data = await SecureStorage.getUserData();
+    var user_data = await SecureStorage.getUserData();
     // debugPrint(user_data.toString());
     setState(() {
       user_data = user_data;
@@ -31,8 +35,68 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         body: SafeArea(
-            child: user_data != null
-                ? Text(user_data['spotify_refresh_token'].toString())
-                : const Text('loading...')));
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(width: MediaQuery.of(context).size.width),
+            const Spacer(),
+            Container(
+                margin: EdgeInsets.fromLTRB(
+                    0, (MediaQuery.of(context).size.height * 0), 0, 0),
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.width * 0.05, 0, 0),
+                  child: SizedBox(
+                    width: (MediaQuery.of(context).size.width * 0.55),
+                    height: (MediaQuery.of(context).size.width * 0.55),
+                    child: song_data['cover'] != ''
+                        ? Image.network(fit: BoxFit.cover, song_data['cover'])
+                        : Image.asset(
+                            fit: BoxFit.cover, 'assets/icons/music_icon.png'),
+                  ),
+                )),
+            Container(
+                margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                child: Text(
+                  song_data['title'],
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColorLight, fontSize: 30),
+                )),
+            Container(
+                margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: Text(
+                  song_data['artist'],
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColorLight, fontSize: 23),
+                )),
+            const Spacer(),
+            Container(
+                margin: EdgeInsets.fromLTRB(
+                    0, 0, 0, MediaQuery.of(context).size.width * 0.08),
+                child: Text(
+                  'Listen with your Friends',
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColorLight, fontSize: 29),
+                )),
+            Container(
+                margin: EdgeInsets.fromLTRB(
+                    0, 0, 0, MediaQuery.of(context).size.height * 0.02),
+                child: AccentButton(
+                  [
+                    (MediaQuery.of(context).size.width * 0.8).toDouble(),
+                    (MediaQuery.of(context).size.height * 0.062).toDouble()
+                  ],
+                  'Start Listen Together',
+                  () => {},
+                )),
+            Container(
+                margin: EdgeInsets.fromLTRB(
+                    0, 0, 0, MediaQuery.of(context).size.height * 0.03),
+                child: TransparentButton([
+                  (MediaQuery.of(context).size.width * 0.8).toDouble(),
+                  (MediaQuery.of(context).size.height * 0.062).toDouble()
+                ], 'Join Listen Together', () => {})),
+          ],
+        )));
   }
 }

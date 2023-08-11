@@ -29,13 +29,20 @@ class SpotifyAPI {
 
   static Future<Map> GetPlayingSong(username, password, access_token) async {
     const String url = 'http://127.0.0.1:8000/api/playback/playing_song/';
-    String encodedBody =
-        jsonEncode({"password": password, "username": username});
-    var playing_song = await client.post(Uri.parse(url),
-        body: encodedBody,
-        headers: {"Authorization": "Bearer " + access_token});
-    // var dec_playing_song = jsonDecode(utf8.decode(playing_song.bodyBytes));
-    // debugPrint(dec_playing_song.toString());
-    return {'data': 'data'};
+    try {
+      String encodedBody =
+          jsonEncode({"password": password, "username": username});
+      var playing_song = await client.post(Uri.parse(url),
+          body: encodedBody,
+          headers: {"Authorization": "Bearer " + access_token});
+      var dec_playing_song = jsonDecode(utf8.decode(playing_song.bodyBytes));
+      return {
+        'data': dec_playing_song['data']['item'],
+        'error_message': '',
+        'success': true
+      };
+    } on Exception catch (_) {
+      return {'error_message': 'No connection to Spotify', 'success': false};
+    }
   }
 }
