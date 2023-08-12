@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:authentication/authentication.dart';
 import '../../../services/data.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
+import 'package:listen_together_app/services/storage.dart';
 import '../../home/home.dart';
 import 'package:spotify_api/spotify_api.dart';
 
@@ -29,7 +30,6 @@ class _SplashScreenState extends State<SplashScreen> {
       errorMessage = '';
     });
     bool connection = await Authentication.checkConnection();
-    await Data.init();
     if (connection) {
       await Data.initApp(context);
       var data = await Data.readData();
@@ -40,7 +40,10 @@ class _SplashScreenState extends State<SplashScreen> {
             user_data['username'],
             user_data['password'],
             tokens['access_token']);
-        debugPrint(spotify_data.toString());
+        if (spotify_data['success']) {
+          spotify_data = spotify_data['data']['data'];
+          Storage.saveData(spotify_data, 'playing_song');
+        }
 
         Navigator.pushReplacement(
           context,

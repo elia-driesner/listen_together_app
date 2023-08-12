@@ -36,7 +36,6 @@ class SpotifyAPI {
           body: encodedBody,
           headers: {"Authorization": "Bearer " + access_token});
       var dec_playing_song = jsonDecode(utf8.decode(playing_song.bodyBytes));
-      debugPrint(dec_playing_song.toString());
       return {'data': dec_playing_song, 'error_message': '', 'success': true};
     } on Exception catch (_) {
       return {'error_message': 'No connection to Spotify', 'success': false};
