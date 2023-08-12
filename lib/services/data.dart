@@ -2,7 +2,6 @@ import 'package:authentication/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
 import '/pages/auth/auth.dart';
-import '/pages/houseparty/houseparty.dart';
 
 class Data {
   static Future<void> init() async {
@@ -17,6 +16,7 @@ class Data {
   }
 
   static Future<void> initApp(context) async {
+    // SecureStorage.clearData();
     var data = await readData();
     var user_data = data['user_data'];
     var tokens = data['tokens'];
