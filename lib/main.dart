@@ -5,7 +5,6 @@ import 'app.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
-  debugPrint(dotenv.env['SERVER_URL'].toString());
   runApp(const MyApp());
 }
 

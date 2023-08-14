@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class SpotifyAPI {
-  static String client_id = '73b15a242eaa4132a448cffe09997787';
-  static var redirect_uri = 'http://127.0.0.1:8000/api/db/callback';
+  static String client_id = dotenv.env['SPOTIFY_CLIENT_ID'].toString();
+  static var redirect_uri = dotenv.env['SPOTIFY_REDIRECT_URL'].toString();
   static Map<String, dynamic> url_map = {
     'login': 'https://accounts.spotify.com/authorize?'
   };
@@ -28,7 +29,8 @@ class SpotifyAPI {
   }
 
   static Future<Map> GetPlayingSong(username, password, access_token) async {
-    const String url = 'http://127.0.0.1:8000/api/playback/playing_song/';
+    String server_url = dotenv.env['SERVER_URL'].toString();
+    String url = '${server_url}api/playback/playing_song/';
     try {
       String encodedBody =
           jsonEncode({"password": password, "username": username});

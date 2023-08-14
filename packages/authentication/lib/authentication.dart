@@ -1,11 +1,11 @@
 import 'dart:convert';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 // import 'package:listen_together_app/services/secure_storage.dart';
 
 class Authentication {
-  static var serverUrl = 'http://127.0.0.1:8000/';
+  static var serverUrl = dotenv.env['SERVER_URL'].toString();
   static String errorMessage = '';
 
   static Future<Map> SignIn(username, password) async {
@@ -168,7 +168,6 @@ class Authentication {
           body: {'refresh': refresh_token});
       var decoded_access_token =
           jsonDecode(utf8.decode(access_token.bodyBytes));
-      debugPrint(decoded_access_token.toString());
       // !TODO check if token is expired if yes get new token using login data
       decoded_access_token = decoded_access_token['access'];
       Map<String, String> tokens = {
