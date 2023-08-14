@@ -3,8 +3,7 @@ import 'package:listen_together_app/pages/listen_together/view/start_listen_toge
 import 'package:listen_together_app/services/secure_storage.dart';
 import 'package:listen_together_app/services/storage.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
-
-import 'package:listen_together_app/pages/listen_together/listen_together.dart';
+import 'package:listen_together_app/pages/settings/settings.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -30,9 +29,9 @@ class _HomepageState extends State<Homepage> {
     song_data['dominant_colors'].forEach((var color) => {
           colors.add(Color.fromRGBO(color[0], color[1], color[2], 1)),
         });
-    if (colors.length != 0)
+    if (colors.length != 0) {
       setState(() => song_data['fade_colors'] = colors);
-    else {}
+    } else {}
   }
 
   void checkLogin(context) async {
@@ -85,7 +84,14 @@ class _HomepageState extends State<Homepage> {
                 child: Container(
                   margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
                   child: IconButton(
-                      onPressed: () => {},
+                      onPressed: () => {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SettingsPage(),
+                              ),
+                            )
+                          },
                       icon: const Icon(
                         Icons.more_horiz,
                         size: 30,
