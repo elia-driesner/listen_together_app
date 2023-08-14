@@ -128,6 +128,9 @@ class TransparentButton extends StatelessWidget {
         child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
+              foregroundColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              shadowColor: Colors.transparent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
