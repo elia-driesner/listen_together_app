@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SettingsPage extends StatefulWidget {
   SettingsPage({super.key});
@@ -18,7 +20,13 @@ class _SettingsPageState extends State<SettingsPage> {
     ],
     'About': [
       ['About us', () => {}],
-      ['Website', () => {}]
+      [
+        'Website',
+        () => {
+              launchUrl(Uri.parse(dotenv.env['SERVER_URL'].toString()),
+                  webOnlyWindowName: '_blank')
+            }
+      ]
     ]
   };
   List<Widget> children = [];
@@ -39,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       color: Theme.of(context).primaryColorLight, fontSize: 17),
                 ),
               ),
-              Expanded(child: Divider(color: Colors.grey)),
+              const Expanded(child: Divider(color: Colors.grey)),
             ],
           ),
         ),
