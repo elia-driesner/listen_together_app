@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:listen_together_app/services/secure_storage.dart';
+import 'package:listen_together_app/pages/auth/auth.dart';
 
 class SettingsPage extends StatefulWidget {
   SettingsPage({super.key});
@@ -11,12 +15,27 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  Map settings = {
+  List<Widget> children = [];
+
+  logout() async {
+    await SecureStorage.clearData();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UsernamePage(),
+      ),
+    );
+  }
+
+  late Map settings = {
     'Account': [
       ['Change Username', () => {}],
       ['Change Password', () => {}],
       ['Delete Account', () => {}],
-      ['Logout', () => {}]
+      [
+        'Logout',
+        () => {logout()}
+      ]
     ],
     'About': [
       ['About us', () => {}],
@@ -29,7 +48,6 @@ class _SettingsPageState extends State<SettingsPage> {
       ]
     ]
   };
-  List<Widget> children = [];
 
   void create_widgets() async {
     settings.forEach((key, value) {
