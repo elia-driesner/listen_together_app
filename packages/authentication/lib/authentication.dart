@@ -168,8 +168,18 @@ class Authentication {
           body: {'refresh': refresh_token});
       var decoded_access_token =
           jsonDecode(utf8.decode(access_token.bodyBytes));
-      // !TODO check if token is expired if yes get new token using login data
-      decoded_access_token = decoded_access_token['access'];
+      if (decoded_access_token['code'] == 'token_not_valid') {
+        var tokenResp = await client.post(Uri.parse(serverUrl + 'api/token/'),
+            body: {
+              'username': user_data['username'],
+              'password': user_data['password']
+            });
+        var decodedToken = jsonDecode(utf8.decode(tokenResp.bodyBytes)) as Map;
+        decoded_access_token = decodedToken['access'];
+      } else {
+        decoded_access_token = decoded_access_token['access'];
+      }
+
       Map<String, String> tokens = {
         'access_token': decoded_access_token,
         'refresh_token': refresh_token

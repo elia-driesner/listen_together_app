@@ -146,8 +146,6 @@ class TransparentButton extends StatelessWidget {
                           fontSize: 20,
                           color: Theme.of(context).primaryColorLight)),
                 ),
-                Icon(Icons.arrow_forward,
-                    color: Theme.of(context).primaryColorDark)
               ],
             )),
       ),

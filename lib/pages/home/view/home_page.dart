@@ -33,7 +33,6 @@ class _HomepageState extends State<Homepage> {
     if (colors.length != 0)
       setState(() => song_data['fade_colors'] = colors);
     else {}
-    debugPrint(song_data['fade_colors'][0].value.toString());
   }
 
   void checkLogin(context) async {
@@ -81,6 +80,21 @@ class _HomepageState extends State<Homepage> {
                             colors: song_data['fade_colors'])))
                 : Container(),
             SafeArea(
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                  child: IconButton(
+                      onPressed: () => {},
+                      icon: const Icon(
+                        Icons.more_horiz,
+                        size: 30,
+                        color: Colors.grey,
+                      )),
+                ),
+              ),
+            ),
+            SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -108,6 +122,7 @@ class _HomepageState extends State<Homepage> {
                       margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                       child: Text(
                         song_data['title'],
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Theme.of(context).primaryColorLight,
                             fontSize: 30),
