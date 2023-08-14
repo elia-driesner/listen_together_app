@@ -25,7 +25,6 @@ class _HomepageState extends State<Homepage> {
     var user_data = await SecureStorage.getUserData();
     // debugPrint(user_data.toString());
     var _playing_song = await Storage.getData('playing_song');
-    await Storage.deleteData('playing_song');
     var playing_song;
     if (_playing_song != null) {
       playing_song = _playing_song;

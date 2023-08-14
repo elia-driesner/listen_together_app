@@ -18,7 +18,8 @@ class Data {
   }
 
   static Future<void> initApp(context) async {
-    await init(); // SecureStorage.clearData();
+    await init();
+    // SecureStorage.clearData();
     var data = await readData();
     var user_data = data['user_data'];
     var tokens = data['tokens'];
@@ -42,13 +43,6 @@ class Data {
                     uid: user_data['uid'])));
       } else {
         await updateData(user_data, tokens);
-        // Navigator.pushReplacement(
-        //   context,
-        //   PageRouteBuilder(
-        //     pageBuilder: (context, animation1, animation2) => StartPartyPage(),
-        //     transitionDuration: Duration.zero,
-        //   ),
-        // );
       }
     }
   }

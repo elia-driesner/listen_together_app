@@ -168,6 +168,8 @@ class Authentication {
           body: {'refresh': refresh_token});
       var decoded_access_token =
           jsonDecode(utf8.decode(access_token.bodyBytes));
+      debugPrint(decoded_access_token.toString());
+      // !TODO check if token is expired if yes get new token using login data
       decoded_access_token = decoded_access_token['access'];
       Map<String, String> tokens = {
         'access_token': decoded_access_token,
