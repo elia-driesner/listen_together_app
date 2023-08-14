@@ -28,16 +28,20 @@ class _HomepageState extends State<Homepage> {
     var playing_song;
     if (_playing_song != null) {
       playing_song = _playing_song;
-    }
-    setState(() {
-      user_data = user_data;
+      setState(() {
+        user_data = user_data;
 
-      song_data['dominant_colors'] =
-          playing_song['item']['dominant_cover_colors'];
-      song_data['cover'] = playing_song['item']['album']['images'][1]['url'];
-      song_data['title'] = playing_song['item']['name'];
-      song_data['artist'] = playing_song['item']['artist_names'];
-    });
+        song_data['dominant_colors'] =
+            playing_song['item']['dominant_cover_colors'];
+        song_data['cover'] = playing_song['item']['album']['images'][1]['url'];
+        song_data['title'] = playing_song['item']['name'];
+        song_data['artist'] = playing_song['item']['artist_names'];
+      });
+    } else {
+      setState(() {
+        user_data = user_data;
+      });
+    }
   }
 
   @override

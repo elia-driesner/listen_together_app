@@ -40,10 +40,13 @@ class _SplashScreenState extends State<SplashScreen> {
             user_data['username'],
             user_data['password'],
             tokens['access_token']);
-        if (spotify_data['success']) {
-          spotify_data = spotify_data['data']['data'];
-          await Storage.deleteData('playing_song');
-          await Storage.saveData(spotify_data, 'playing_song');
+        if (spotify_data['data']['success'] == true) {
+          if (spotify_data['data']['code'] != 'not_playing') {
+            debugPrint(spotify_data.toString());
+            spotify_data = spotify_data['data']['data'];
+            await Storage.deleteData('playing_song');
+            await Storage.saveData(spotify_data, 'playing_song');
+          }
         }
 
         Navigator.pushReplacement(
