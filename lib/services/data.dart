@@ -8,6 +8,7 @@ class Data {
   static Future<void> init() async {
     await SecureStorage.init();
     await Storage.init();
+    await Storage.deleteData('playing_song');
   }
 
   static Future<Map> readData() async {
