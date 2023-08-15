@@ -24,8 +24,12 @@ class SpotifyAPI {
     };
 
     final Uri url = Uri.http('accounts.spotify.com', 'authorize', params);
-    var resp = await launchUrl(url);
-    return resp;
+    try {
+      var resp = await launchUrl(url);
+      return resp;
+    } on Exception catch (_) {
+      return false;
+    }
   }
 
   static Future<Map> GetPlayingSong(username, password, access_token) async {

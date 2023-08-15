@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:authentication/authentication.dart';
 import 'package:listen_together_app/models/tokens.dart';
+import 'package:listen_together_app/pages/auth/view/spotify_auth/connect_page.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'dart:io' show Platform;
+import 'package:listen_together_app/pages/auth/auth.dart';
 
 import 'package:listen_together_app/pages/home/home.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
@@ -50,7 +52,10 @@ class _RegisterPageState extends State<RegisterPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Homepage(),
+            builder: (context) => SpotifyConnectPage(
+                username: username,
+                password: password,
+                uid: user_data['data']['uid']),
           ),
         );
       } else {

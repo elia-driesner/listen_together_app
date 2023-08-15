@@ -29,22 +29,13 @@ class Data {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => UsernamePage(),
+          pageBuilder: (context, animation1, animation2) =>
+              const UsernamePage(),
           transitionDuration: Duration.zero,
         ),
       );
     } else {
-      if (user_data['spotify_refresh_token'] == "") {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SpotifyConnectPage(
-                    username: user_data['username'],
-                    password: user_data['password'],
-                    uid: user_data['uid'])));
-      } else {
-        await updateData(user_data, tokens);
-      }
+      await updateData(user_data, tokens);
     }
   }
 

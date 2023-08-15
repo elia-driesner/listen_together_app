@@ -7,6 +7,7 @@ import 'package:listen_together_app/services/secure_storage.dart';
 import 'package:listen_together_app/services/storage.dart';
 import '../../home/home.dart';
 import 'package:spotify_api/spotify_api.dart';
+import '/pages/auth/auth.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -49,13 +50,22 @@ class _SplashScreenState extends State<SplashScreen> {
             }
           }
         }
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Homepage(),
-          ),
-        );
+        if (user_data['spotify_refresh_token'] == "") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SpotifyConnectPage(
+                      username: user_data['username'],
+                      password: user_data['password'],
+                      uid: user_data['uid'])));
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Homepage(),
+            ),
+          );
+        }
       }
     } else {
       setState(() {

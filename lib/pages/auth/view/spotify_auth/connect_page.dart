@@ -28,6 +28,16 @@ class _SpotifyConnectPageState extends State<SpotifyConnectPage> {
   Widget? loadingIndicator;
   final auth = Authentication();
 
+  logout() async {
+    await SecureStorage.clearData();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UsernamePage(),
+      ),
+    );
+  }
+
   void connectSpotify() async {
     if (Platform.isAndroid) {
       loadingIndicator = const CircularProgressIndicator();
@@ -71,14 +81,28 @@ class _SpotifyConnectPageState extends State<SpotifyConnectPage> {
             child: Column(
           children: [
             Container(
-              margin: EdgeInsets.fromLTRB(
-                  0, (MediaQuery.of(context).size.height * 0.02), 0, 0),
-              child: Center(
-                  child: Text('Listen Together',
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColorLight,
-                          fontSize:
-                              (MediaQuery.of(context).size.width * 0.06)))),
+              margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: Row(children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(10, 0, 40, 0),
+                    child: IconButton(
+                        onPressed: () => {logout()},
+                        alignment: Alignment.centerLeft,
+                        icon: const Icon(
+                          Icons.logout,
+                          size: 30,
+                          color: Colors.white,
+                        )),
+                  ),
+                ),
+                Text(
+                  'Listen Together',
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColorLight, fontSize: 23),
+                ),
+                const Spacer(),
+              ]),
             ),
             Stack(children: []),
             Container(

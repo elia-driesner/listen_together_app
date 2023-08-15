@@ -53,12 +53,12 @@ class _SettingsPageState extends State<SettingsPage> {
     settings.forEach((key, value) {
       children.add(
         Container(
-          margin: EdgeInsets.fromLTRB(40, 20, 50, 0),
+          margin: const EdgeInsets.fromLTRB(40, 20, 50, 0),
           alignment: Alignment.bottomLeft,
           child: Row(
             children: [
               Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
                 child: Text(
                   key,
                   style: TextStyle(
