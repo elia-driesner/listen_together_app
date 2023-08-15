@@ -113,8 +113,8 @@ class _HomepageState extends State<Homepage> {
                         margin: EdgeInsets.fromLTRB(
                             0, MediaQuery.of(context).size.width * 0.05, 0, 0),
                         child: SizedBox(
-                          width: (MediaQuery.of(context).size.width * 0.55),
-                          height: (MediaQuery.of(context).size.width * 0.55),
+                          width: (MediaQuery.of(context).size.width * 0.60),
+                          height: (MediaQuery.of(context).size.width * 0.60),
                           child: song_data['cover'] != ''
                               ? Image.network(
                                   fit: BoxFit.cover,

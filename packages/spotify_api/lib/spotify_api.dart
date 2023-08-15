@@ -6,7 +6,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SpotifyAPI {
   static String client_id = dotenv.env['SPOTIFY_CLIENT_ID'].toString();
-  static var redirect_uri = dotenv.env['SPOTIFY_REDIRECT_URL'].toString();
+  static var redirect_uri = dotenv.env['SERVER_URL'].toString() +
+      dotenv.env['SPOTIFY_REDIRECT_URL'].toString();
   static Map<String, dynamic> url_map = {
     'login': 'https://accounts.spotify.com/authorize?'
   };

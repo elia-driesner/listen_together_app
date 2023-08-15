@@ -1,7 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:listen_together_app/models/tokens.dart';
 import 'package:listen_together_app/models/user.dart';
-import 'package:listen_together_app/models/storage_keys.dart';
 
 class SecureStorage {
   static late var storage;

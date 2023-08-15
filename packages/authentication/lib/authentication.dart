@@ -125,10 +125,12 @@ class Authentication {
       try {
         validationResp = await client
             .get(Uri.parse('${serverUrl}api/db/userExists/' + username));
+        errorMessage = '';
       } on Exception catch (_) {
         errorMessage = 'Server not found, try later again';
       }
       if (errorMessage == 'Server not found, try later again') {
+        debugPrint(errorMessage);
         return errorMessage;
       }
       decodedValidation =
@@ -142,23 +144,6 @@ class Authentication {
       client.close();
     }
   }
-
-  // static Future<Map> RenewTokens(refresh_token) async {
-  //   var client = http.Client();
-  //   var access_token = await client.post(
-  //       Uri.parse(serverUrl + 'api/token/refresh/'),
-  //       body: {'refresh': refresh_token});
-  //   var decoded_access_token =
-  //       jsonDecode(utf8.decode(access_token.bodyBytes)) as Map;
-  //   debugPrint({
-  //     'access_token': decoded_access_token,
-  //     'refresh_token': refresh_token
-  //   }.toString());
-  //   return {
-  //     'access_token': decoded_access_token,
-  //     'refresh_token': refresh_token
-  //   };
-  // }
 
   static Future<Map> RenewData(user_data, refresh_token) async {
     var client = http.Client();

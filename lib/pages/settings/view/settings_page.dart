@@ -29,7 +29,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   late Map settings = {
     'Account': [
-      ['Change Username', () => {}],
+      ['Remove Spotify Data', () => {}],
       ['Change Password', () => {}],
       ['Delete Account', () => {}],
       [

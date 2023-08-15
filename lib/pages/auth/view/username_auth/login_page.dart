@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:authentication/authentication.dart';
 import 'package:listen_together_app/models/tokens.dart';
+import 'package:listen_together_app/pages/splash_screen/view/splash_screen.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'dart:io' show Platform;
 
@@ -48,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Homepage(),
+            builder: (context) => SplashScreen(),
           ),
         );
       } else {
