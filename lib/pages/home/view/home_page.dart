@@ -46,7 +46,10 @@ class _HomepageState extends State<Homepage> {
 
         song_data['dominant_colors'] =
             playing_song['item']['dominant_cover_colors'];
-        song_data['cover'] = playing_song['item']['album']['images'][1]['url'];
+        if (playing_song['item']['is_local'] == false) {
+          song_data['cover'] =
+              playing_song['item']['album']['images'][1]['url'];
+        }
         song_data['title'] = playing_song['item']['name'];
         song_data['artist'] = playing_song['item']['artist_names'];
       });
