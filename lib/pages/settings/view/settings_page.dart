@@ -16,6 +16,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   List<Widget> children = [];
+  Map user_data = {};
 
   logout() async {
     await SecureStorage.clearData();
@@ -25,6 +26,22 @@ class _SettingsPageState extends State<SettingsPage> {
         builder: (context) => UsernamePage(),
       ),
     );
+  }
+
+  void getUserData() async {
+    var _user_data = await SecureStorage.getUserData();
+    if (_user_data != null) {
+      setState(() {
+        user_data = _user_data;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+    WidgetsBinding.instance.addPostFrameCallback((_) => create_widgets());
   }
 
   late Map settings = {
@@ -84,12 +101,6 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => create_widgets());
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
@@ -119,6 +130,19 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 const Spacer(),
               ]),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                user_data['username'] != null
+                    ? Text(
+                        user_data['username'],
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColorLight,
+                            fontSize: 23),
+                      )
+                    : Text(''),
+              ],
             ),
             Column(
               children: children,
