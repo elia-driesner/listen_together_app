@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:listen_together_app/pages/listen_together/view/start_listen_together.dart';
+import 'package:listen_together_app/pages/listen_together/listen_together.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
 import 'package:listen_together_app/services/storage.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
@@ -177,10 +177,22 @@ class _HomepageState extends State<Homepage> {
                   Container(
                       margin: EdgeInsets.fromLTRB(
                           0, 0, 0, MediaQuery.of(context).size.height * 0.03),
-                      child: TransparentButton([
-                        (MediaQuery.of(context).size.width * 0.8).toDouble(),
-                        (MediaQuery.of(context).size.height * 0.062).toDouble()
-                      ], 'Join Listen Together', () => {})),
+                      child: TransparentButton(
+                          [
+                            (MediaQuery.of(context).size.width * 0.8)
+                                .toDouble(),
+                            (MediaQuery.of(context).size.height * 0.062)
+                                .toDouble()
+                          ],
+                          'Join Listen Together',
+                          () => {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => JoinListenTogether(),
+                                  ),
+                                )
+                              })),
                 ],
               ),
             ),
