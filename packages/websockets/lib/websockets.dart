@@ -8,9 +8,12 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class Websocket {
   static String serverUrl = dotenv.env['WEBSOCKETS_URL'].toString();
   static String playingSongUrl = dotenv.env['PLAYING_SONG_URL'].toString();
-  static var channel;
+  static var channel = WebSocketChannel.connect(
+    Uri.parse(serverUrl + playingSongUrl),
+  );
 
-  static void init() {
+  static void renewConnection() {
+    channel.sink.close();
     channel = WebSocketChannel.connect(
       Uri.parse(serverUrl + playingSongUrl),
     );

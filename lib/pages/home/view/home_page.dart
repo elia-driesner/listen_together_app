@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/pages/listen_together/listen_together.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
 import 'package:listen_together_app/services/storage.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:listen_together_app/pages/settings/settings.dart';
+import 'package:websockets/websockets.dart';
+import 'package:web_socket_channel/status.dart' as status;
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -17,7 +21,6 @@ class _HomepageState extends State<Homepage> {
     'cover': '',
     'title': 'Spotify not playing',
     'artist': '',
-    'dominant_colors': [],
     'fade_colors': [
       Color.fromRGBO(0, 0, 0, 1),
       Color.fromRGBO(0, 0, 0, 1),
@@ -26,12 +29,34 @@ class _HomepageState extends State<Homepage> {
 
   Future<void> extractColors() async {
     List<Color> colors = [];
-    song_data['dominant_colors'].forEach((var color) => {
+    song_data['fade_colors'].forEach((var color) => {
           colors.add(Color.fromRGBO(color[0], color[1], color[2], 1)),
         });
     if (colors.length != 0) {
       setState(() => song_data['fade_colors'] = colors);
     } else {}
+  }
+
+  void update_song() async {
+    var channel = Websocket.channel;
+    channel.sink
+        .add(jsonEncode({"request": "start_song_loop", "username": "Elia"}));
+    channel.stream.listen((playing_song) {
+      playing_song = json.decode(playing_song);
+      if (playing_song['success'] == null) {
+        setState(() {
+          song_data['fade_colors'] =
+              playing_song['item']['dominant_cover_colors'];
+          if (playing_song['item']['is_local'] == false) {
+            song_data['cover'] =
+                playing_song['item']['album']['images'][1]['url'];
+          }
+          song_data['title'] = playing_song['item']['name'];
+          song_data['artist'] = playing_song['item']['artist_names'];
+        });
+        extractColors();
+      }
+    });
   }
 
   void checkLogin(context) async {
@@ -44,7 +69,7 @@ class _HomepageState extends State<Homepage> {
       setState(() {
         user_data = user_data;
 
-        song_data['dominant_colors'] =
+        song_data['fade_colors'] =
             playing_song['item']['dominant_cover_colors'];
         if (playing_song['item']['is_local'] == false) {
           song_data['cover'] =
@@ -59,6 +84,7 @@ class _HomepageState extends State<Homepage> {
         user_data = user_data;
       });
     }
+    update_song();
   }
 
   @override
@@ -165,14 +191,12 @@ class _HomepageState extends State<Homepage> {
                               .toDouble()
                         ],
                         'Start Listen Together',
-                        () => {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => StartListenTogether(),
-                            ),
-                          )
-                        },
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StartListenTogether(),
+                          ),
+                        ),
                       )),
                   Container(
                       margin: EdgeInsets.fromLTRB(
@@ -185,14 +209,12 @@ class _HomepageState extends State<Homepage> {
                                 .toDouble()
                           ],
                           'Join Listen Together',
-                          () => {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => JoinListenTogether(),
-                                  ),
-                                )
-                              })),
+                          () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => JoinListenTogether(),
+                                ),
+                              ))),
                 ],
               ),
             ),
