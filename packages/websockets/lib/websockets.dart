@@ -12,7 +12,7 @@ class Websocket {
     Uri.parse(serverUrl + playingSongUrl),
   );
 
-  static void renewConnection() {
+  static Future renewConnection() async {
     channel.sink.close();
     channel = WebSocketChannel.connect(
       Uri.parse(serverUrl + playingSongUrl),

@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/pages/listen_together/listen_together.dart';
 import 'package:listen_together_app/services/secure_storage.dart';
@@ -7,7 +9,7 @@ import 'package:listen_together_app/services/storage.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:listen_together_app/pages/settings/settings.dart';
 import 'package:websockets/websockets.dart';
-import 'package:web_socket_channel/status.dart' as status;
+import 'package:authentication/authentication.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -26,6 +28,37 @@ class _HomepageState extends State<Homepage> {
       Color.fromRGBO(0, 0, 0, 1),
     ]
   };
+  String errorMessage = '';
+  Widget? loadingIndicator;
+
+  void reconnect(username) async {
+    if (Platform.isAndroid) {
+      loadingIndicator = const CircularProgressIndicator();
+    } else {
+      loadingIndicator = const CupertinoActivityIndicator(radius: 18);
+    }
+    setState(() => {
+          loadingIndicator,
+          song_data['title'] = 'No Connection',
+          song_data['artist'] = '',
+          song_data['cover'] = '',
+          song_data['fade_colors'] = [
+            Color.fromRGBO(0, 0, 0, 1),
+            Color.fromRGBO(0, 0, 0, 1),
+          ]
+        });
+    bool try_again = true;
+    while (try_again) {
+      var connection = await Authentication.checkConnection();
+      if (connection == true) {
+        try_again = false;
+        await Websocket.renewConnection();
+        update_song(username);
+      } else {
+        Future.delayed(const Duration(milliseconds: 200));
+      }
+    }
+  }
 
   Future<void> extractColors() async {
     List<Color> colors = [];
@@ -34,57 +67,65 @@ class _HomepageState extends State<Homepage> {
         });
     if (colors.length != 0) {
       setState(() => song_data['fade_colors'] = colors);
-    } else {}
+    }
   }
 
-  void update_song() async {
+  void update_song(username) async {
+    setState(() => {loadingIndicator = null, song_data['title'] = 'Loading'});
     var channel = Websocket.channel;
     channel.sink
-        .add(jsonEncode({"request": "start_song_loop", "username": "Elia"}));
-    channel.stream.listen((playing_song) {
-      playing_song = json.decode(playing_song);
-      if (playing_song['success'] == null) {
-        setState(() {
-          song_data['fade_colors'] =
-              playing_song['item']['dominant_cover_colors'];
-          if (playing_song['item']['is_local'] == false) {
-            song_data['cover'] =
-                playing_song['item']['album']['images'][1]['url'];
-          }
-          song_data['title'] = playing_song['item']['name'];
-          song_data['artist'] = playing_song['item']['artist_names'];
-        });
-        extractColors();
-      }
-    });
+        .add(jsonEncode({"request": "start_song_loop", "username": username}));
+    channel.stream.listen(
+      (playingSong) {
+        playingSong = json.decode(playingSong);
+        if (playingSong['success'] == null) {
+          setState(() {
+            song_data['fade_colors'] =
+                playingSong['item']['dominant_cover_colors'];
+            if (playingSong['item']['is_local'] == false) {
+              song_data['cover'] =
+                  playingSong['item']['album']['images'][1]['url'];
+            } else {
+              song_data['cover'] = '';
+            }
+            song_data['title'] = playingSong['item']['name'];
+            song_data['artist'] = playingSong['item']['artist_names'];
+          });
+          extractColors();
+        }
+      },
+      onDone: () {
+        reconnect(username);
+      },
+    );
   }
 
   void checkLogin(context) async {
-    var user_data = await SecureStorage.getUserData();
+    var userData = await SecureStorage.getUserData();
     // debugPrint(user_data.toString());
     var _playing_song = await Storage.getData('playing_song');
-    var playing_song;
+    var playingSong;
     if (_playing_song != null) {
-      playing_song = _playing_song;
+      playingSong = _playing_song;
       setState(() {
-        user_data = user_data;
+        userData = userData;
 
-        song_data['fade_colors'] =
-            playing_song['item']['dominant_cover_colors'];
-        if (playing_song['item']['is_local'] == false) {
-          song_data['cover'] =
-              playing_song['item']['album']['images'][1]['url'];
+        song_data['fade_colors'] = playingSong['item']['dominant_cover_colors'];
+        if (playingSong['item']['is_local'] == false) {
+          song_data['cover'] = playingSong['item']['album']['images'][1]['url'];
         }
-        song_data['title'] = playing_song['item']['name'];
-        song_data['artist'] = playing_song['item']['artist_names'];
+        song_data['title'] = playingSong['item']['name'];
+        song_data['artist'] = playingSong['item']['artist_names'];
       });
       extractColors();
     } else {
-      setState(() {
-        user_data = user_data;
-      });
+      if (userData != null) {
+        setState(() {
+          userData = userData;
+        });
+      }
     }
-    update_song();
+    update_song(userData?['username']);
   }
 
   @override
@@ -136,23 +177,32 @@ class _HomepageState extends State<Homepage> {
                   Container(width: MediaQuery.of(context).size.width),
                   const Spacer(),
                   Container(
-                      margin: EdgeInsets.fromLTRB(
-                          0, (MediaQuery.of(context).size.height * 0), 0, 0),
-                      child: Container(
-                        margin: EdgeInsets.fromLTRB(
-                            0, MediaQuery.of(context).size.width * 0.05, 0, 0),
-                        child: SizedBox(
-                          width: (MediaQuery.of(context).size.width * 0.60),
-                          height: (MediaQuery.of(context).size.width * 0.60),
-                          child: song_data['cover'] != ''
-                              ? Image.network(
-                                  fit: BoxFit.cover,
-                                  song_data['cover'].toString())
-                              : Image.asset(
-                                  fit: BoxFit.cover,
-                                  'assets/icons/music_icon.png'),
-                        ),
-                      )),
+                    margin: EdgeInsets.fromLTRB(
+                        0, (MediaQuery.of(context).size.height * 0), 0, 0),
+                    child: loadingIndicator == null
+                        ? Container(
+                            margin: EdgeInsets.fromLTRB(0,
+                                MediaQuery.of(context).size.width * 0.05, 0, 0),
+                            child: SizedBox(
+                              width: (MediaQuery.of(context).size.width * 0.60),
+                              height:
+                                  (MediaQuery.of(context).size.width * 0.60),
+                              child: song_data['cover'] != ''
+                                  ? Image.network(
+                                      fit: BoxFit.cover,
+                                      song_data['cover'].toString())
+                                  : Image.asset(
+                                      fit: BoxFit.cover,
+                                      'assets/icons/music_icon.png'),
+                            ),
+                          )
+                        : Container(
+                            margin: EdgeInsets.fromLTRB(0,
+                                MediaQuery.of(context).size.width * 0.05, 0, 0),
+                            width: (MediaQuery.of(context).size.width * 0.60),
+                            height: (MediaQuery.of(context).size.width * 0.60),
+                            child: loadingIndicator),
+                  ),
                   Container(
                       margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                       child: Text(
@@ -172,18 +222,21 @@ class _HomepageState extends State<Homepage> {
                             fontSize: 23),
                       )),
                   const Spacer(),
+                  // Container(
+                  //     margin: EdgeInsets.fromLTRB(
+                  //         0, 0, 0, MediaQuery.of(context).size.width * 0.08),
+                  //     child: Text(
+                  //       'Listen with your Friends',
+                  //       style: TextStyle(
+                  //           color: Theme.of(context).primaryColorLight,
+                  //           fontSize: 29),
+                  //     )),
                   Container(
                       margin: EdgeInsets.fromLTRB(
-                          0, 0, 0, MediaQuery.of(context).size.width * 0.08),
-                      child: Text(
-                        'Listen with your Friends',
-                        style: TextStyle(
-                            color: Theme.of(context).primaryColorLight,
-                            fontSize: 29),
-                      )),
-                  Container(
-                      margin: EdgeInsets.fromLTRB(
-                          0, 0, 0, MediaQuery.of(context).size.height * 0.02),
+                          0,
+                          MediaQuery.of(context).size.height * 0.05,
+                          0,
+                          MediaQuery.of(context).size.height * 0.02),
                       child: AccentButton(
                         [
                           (MediaQuery.of(context).size.width * 0.8).toDouble(),
