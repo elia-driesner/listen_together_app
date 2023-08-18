@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 
@@ -9,10 +11,11 @@ class JoinListenTogether extends StatefulWidget {
 }
 
 class _JoinListenTogetherState extends State<JoinListenTogether> {
-  TextEditingController nameController = TextEditingController();
+  TextEditingController idController = TextEditingController();
   double name_margin = 0.1;
   List<double> name_size = [0.8, 0.1];
-  String errorMessage = 'test';
+  String errorMessage = '';
+  Widget? loadingIndicator;
 
   void moveName() async {
     setState(() => {
@@ -21,7 +24,32 @@ class _JoinListenTogetherState extends State<JoinListenTogether> {
         });
   }
 
-  void join() async {}
+  void moveNameBack() async {
+    setState(() => {
+          name_margin = 0.1,
+          name_size = [0.8, 0.1]
+        });
+  }
+
+  void join(roomId) async {
+    roomId = roomId.toString();
+    if (roomId == '') {
+      setState(() => {errorMessage = 'Please enter the ID'});
+      moveNameBack();
+    } else if (roomId.length >= 5 || roomId.length <= 3) {
+      setState(() => {errorMessage = 'Please enter the 4 digit code'});
+      moveNameBack();
+    } else {
+      setState(() => {errorMessage = ''});
+      moveName();
+      if (Platform.isAndroid) {
+        loadingIndicator = const CircularProgressIndicator();
+      } else {
+        loadingIndicator = const CupertinoActivityIndicator(radius: 18);
+      }
+      setState(() => loadingIndicator);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,14 +98,34 @@ class _JoinListenTogetherState extends State<JoinListenTogether> {
                     (MediaQuery.of(context).size.height * name_size[1])
                         .toDouble()
                   ],
-                  text: "Code",
-                  controller: nameController,
+                  text: "Room ID",
+                  controller: idController,
                   obscureText: false,
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
+            Container(
+                margin: EdgeInsets.fromLTRB(
+                    0, (MediaQuery.of(context).size.height * 0.08), 0, 0),
+                child:
+                    loadingIndicator != null ? loadingIndicator : Container()),
             const Spacer(),
+            Container(
+                margin: EdgeInsets.fromLTRB(
+                    0, 0, 0, (MediaQuery.of(context).size.height * 0.02)),
+                child: errorMessage != ''
+                    ? Text(errorMessage,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize:
+                                (MediaQuery.of(context).size.width * 0.042)))
+                    : Text('',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize:
+                                (MediaQuery.of(context).size.width * 0.042)))),
             Container(
                 margin: EdgeInsets.fromLTRB(
                     0, 0, 0, MediaQuery.of(context).size.height * 0.035),
@@ -87,7 +135,7 @@ class _JoinListenTogetherState extends State<JoinListenTogether> {
                     (MediaQuery.of(context).size.height * 0.062).toDouble()
                   ],
                   'Join Listen Together',
-                  () => moveName(),
+                  () => join(idController.text),
                 )),
           ],
         )));
