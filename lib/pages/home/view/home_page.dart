@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/pages/listen_together/listen_together.dart';
@@ -24,8 +23,8 @@ class _HomepageState extends State<Homepage> {
     'title': 'Spotify not playing',
     'artist': '',
     'fade_colors': [
-      Color.fromRGBO(0, 0, 0, 1),
-      Color.fromRGBO(0, 0, 0, 1),
+      const Color.fromRGBO(0, 0, 0, 1),
+      const Color.fromRGBO(0, 0, 0, 1),
     ]
   };
   String errorMessage = '';
@@ -43,19 +42,25 @@ class _HomepageState extends State<Homepage> {
           song_data['artist'] = '',
           song_data['cover'] = '',
           song_data['fade_colors'] = [
-            Color.fromRGBO(0, 0, 0, 1),
-            Color.fromRGBO(0, 0, 0, 1),
+            const Color.fromRGBO(0, 0, 0, 1),
+            const Color.fromRGBO(0, 0, 0, 1),
           ]
         });
     bool try_again = true;
+    var tokens = await SecureStorage.getTokens();
+    String accessToken = '';
+    if (tokens != null) {
+      accessToken = tokens['access_token'];
+    }
     while (try_again) {
       var connection = await Authentication.checkConnection();
       if (connection == true) {
         try_again = false;
-        await Websocket.renewConnection();
-        update_song(username);
+        await Websocket.renewConnection(accessToken);
+        setState(() => {song_data['title'] = 'Loading'});
+        update_song(username, accessToken);
       } else {
-        Future.delayed(const Duration(milliseconds: 200));
+        Future.delayed(const Duration(milliseconds: 10000));
       }
     }
   }
@@ -65,13 +70,14 @@ class _HomepageState extends State<Homepage> {
     song_data['fade_colors'].forEach((var color) => {
           colors.add(Color.fromRGBO(color[0], color[1], color[2], 1)),
         });
-    if (colors.length != 0) {
+    if (colors.isNotEmpty) {
       setState(() => song_data['fade_colors'] = colors);
     }
   }
 
-  void update_song(username) async {
-    setState(() => {loadingIndicator = null, song_data['title'] = 'Loading'});
+  void update_song(username, accessToken) async {
+    setState(() => loadingIndicator = null);
+    await Websocket.renewConnection(accessToken);
     var channel = Websocket.channel;
     channel.sink
         .add(jsonEncode({"request": "start_song_loop", "username": username}));
@@ -102,6 +108,11 @@ class _HomepageState extends State<Homepage> {
 
   void checkLogin(context) async {
     var userData = await SecureStorage.getUserData();
+    var tokens = await SecureStorage.getTokens();
+    String accessToken = '';
+    if (tokens != null) {
+      accessToken = tokens['access_token'];
+    }
     // debugPrint(user_data.toString());
     var _playing_song = await Storage.getData('playing_song');
     var playingSong;
@@ -125,7 +136,7 @@ class _HomepageState extends State<Homepage> {
         });
       }
     }
-    update_song(userData?['username']);
+    update_song(userData?['username'], accessToken);
   }
 
   @override
@@ -152,7 +163,7 @@ class _HomepageState extends State<Homepage> {
               child: Align(
                 alignment: Alignment.topRight,
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                  margin: const EdgeInsets.fromLTRB(0, 0, 15, 0),
                   child: IconButton(
                       onPressed: () => {
                             Navigator.push(
@@ -247,7 +258,7 @@ class _HomepageState extends State<Homepage> {
                         () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => StartListenTogether(),
+                            builder: (context) => const StartListenTogether(),
                           ),
                         ),
                       )),
@@ -265,7 +276,8 @@ class _HomepageState extends State<Homepage> {
                           () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => JoinListenTogether(),
+                                  builder: (context) =>
+                                      const JoinListenTogether(),
                                 ),
                               ))),
                 ],
