@@ -11,25 +11,32 @@ class Websocket {
   static String playingSongUrl = dotenv.env['PLAYING_SONG_URL'].toString();
   static var channel;
 
-  static Future<String> getTicket(access_token) async {
-    var userDataResp = await http.post(
-      Uri.parse('${serverApiUrl}api/playback/get_ticket/'),
-      headers: {"Authorization": "Bearer " + access_token},
-    );
-    Map decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
-    if (decodedUserData['success'] == true) {
-      return decodedUserData['data'];
-    } else {
-      return decodedUserData['error'];
+  static Future<Map> getTicket(access_token) async {
+    try {
+      var userDataResp = await http.post(
+        Uri.parse('${serverApiUrl}api/playback/get_ticket/'),
+        headers: {"Authorization": "Bearer " + access_token},
+      );
+      Map decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
+      if (decodedUserData['code'] == 'token_not_valid') {
+        debugPrint('token invalid');
+        // TODO get new token if old one is invalid
+      }
+      return {'data': decodedUserData['data'], 'success': true};
+    } on Exception catch (_) {
+      return {'success': false, 'data': null};
     }
   }
 
   static Future renewConnection(access_token) async {
     if (channel != null) channel.sink.close();
-    String ticket = await getTicket(access_token);
-    channel = await WebSocketChannel.connect(
-      Uri.parse(serverUrl + playingSongUrl + '?ticket=' + ticket),
-    );
+    Map ticket = await getTicket(access_token);
+    debugPrint(ticket.toString());
+    if (ticket['success'] == true) {
+      channel = await WebSocketChannel.connect(
+        Uri.parse(serverUrl + playingSongUrl + '?ticket=' + ticket['data']),
+      );
+    }
   }
 
   static void send(data) => channel.sink.add(data);
