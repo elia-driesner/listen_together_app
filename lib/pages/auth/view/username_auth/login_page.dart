@@ -5,9 +5,10 @@ import 'package:listen_together_app/models/tokens.dart';
 import 'package:listen_together_app/pages/splash_screen/view/splash_screen.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'dart:io' show Platform;
+import 'package:listen_together_app/services/functions/functions.dart';
 
 import 'package:listen_together_app/pages/home/home.dart';
-import 'package:listen_together_app/services/secure_storage.dart';
+import 'package:listen_together_app/services/data/secure_storage.dart';
 
 class LoginPage extends StatefulWidget {
   String username = '';
@@ -33,12 +34,7 @@ class _LoginPageState extends State<LoginPage> {
       errorMessage = "Password too short";
       setState(() => {errorMessage = errorMessage});
     } else {
-      if (Platform.isAndroid) {
-        loadingIndicator = const CircularProgressIndicator();
-      } else {
-        loadingIndicator = const CupertinoActivityIndicator(radius: 18);
-      }
-      setState(() => loadingIndicator);
+      setState(() => loadingIndicator = getLoadingIndicator());
       Map apiReturn = await Authentication.SignIn(username, password);
       if (apiReturn['error_message'] == '') {
         var user_data = apiReturn['user_data'] as Map;

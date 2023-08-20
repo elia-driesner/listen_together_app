@@ -6,9 +6,9 @@ import 'package:listen_together_app/pages/auth/view/spotify_auth/connect_page.da
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'dart:io' show Platform;
 import 'package:listen_together_app/pages/auth/auth.dart';
-
+import 'package:listen_together_app/services/functions/functions.dart';
 import 'package:listen_together_app/pages/home/home.dart';
-import 'package:listen_together_app/services/secure_storage.dart';
+import 'package:listen_together_app/services/data/secure_storage.dart';
 
 class RegisterPage extends StatefulWidget {
   String username = '';
@@ -35,12 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
       errorMessage = "Password too short";
       setState(() => errorMessage = errorMessage);
     } else {
-      if (Platform.isAndroid) {
-        loadingIndicator = const CircularProgressIndicator();
-      } else {
-        loadingIndicator = const CupertinoActivityIndicator(radius: 18);
-      }
-      setState(() => loadingIndicator);
+      setState(() => loadingIndicator = getLoadingIndicator());
       apiReturn = await Authentication.SignUp(username, password);
       if (apiReturn['error_message'] == '') {
         debugPrint(apiReturn.toString());

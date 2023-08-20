@@ -6,7 +6,7 @@ import 'package:authentication/authentication.dart';
 import 'package:listen_together_app/pages/splash_screen/view/splash_screen.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:spotify_api/spotify_api.dart';
-import 'package:listen_together_app/services/secure_storage.dart';
+import 'package:listen_together_app/services/data/secure_storage.dart';
 import 'package:listen_together_app/pages/home/home.dart';
 import '/pages/auth/auth.dart';
 

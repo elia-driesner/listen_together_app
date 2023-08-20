@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:listen_together_app/services/secure_storage.dart';
+import 'package:listen_together_app/services/data/secure_storage.dart';
 import 'package:listen_together_app/pages/auth/auth.dart';
 
 class SettingsPage extends StatefulWidget {

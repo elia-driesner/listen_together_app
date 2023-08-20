@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:authentication/authentication.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'dart:io' show Platform;
-
+import 'package:listen_together_app/services/functions/functions.dart';
 import 'package:listen_together_app/pages/auth/auth.dart';
 
 class UsernamePage extends StatefulWidget {
@@ -26,13 +26,8 @@ class _UsernamePageState extends State<UsernamePage> {
       errorMessage = "Please enter a valid username";
       setState(() => errorMessage = errorMessage);
     } else {
-      if (Platform.isAndroid) {
-        loadingIndicator = const CircularProgressIndicator();
-      } else {
-        loadingIndicator = const CupertinoActivityIndicator(radius: 18);
-      }
       errorMessage = '';
-      setState(() => {loadingIndicator, errorMessage});
+      setState(() => {loadingIndicator = getLoadingIndicator(), errorMessage});
     }
     if (errorMessage == '') {
       String userExists = await Authentication.checkUsername(username);

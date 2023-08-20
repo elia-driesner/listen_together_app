@@ -2,12 +2,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:authentication/authentication.dart';
-import '../../../services/data.dart';
-import 'package:listen_together_app/services/secure_storage.dart';
-import 'package:listen_together_app/services/storage.dart';
+import '../../../services/data/data.dart';
+import 'package:listen_together_app/services/data/secure_storage.dart';
+import 'package:listen_together_app/services/data/storage.dart';
 import '../../home/home.dart';
 import 'package:spotify_api/spotify_api.dart';
 import '/pages/auth/auth.dart';
+import 'package:listen_together_app/services/functions/functions.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,52 +22,12 @@ class _SplashScreenState extends State<SplashScreen> {
   String errorMessage = '';
 
   void loadApp() async {
-    if (Platform.isAndroid) {
-      loadingIndicator = const CircularProgressIndicator();
-    } else {
-      loadingIndicator = const CupertinoActivityIndicator(radius: 18);
-    }
     setState(() {
-      loadingIndicator;
+      loadingIndicator = getLoadingIndicator();
       errorMessage = '';
     });
     bool connection = await Authentication.checkConnection();
     if (connection) {
-      await Data.initApp(context);
-      var data = await Data.readData();
-      var tokens = data['tokens'];
-      var user_data = data['user_data'];
-      if (user_data != null) {
-        var spotify_data = await SpotifyAPI.GetPlayingSong(
-            user_data['username'],
-            user_data['password'],
-            tokens['access_token']);
-        if (spotify_data['data'] != null) {
-          if (spotify_data['data']['success'] == true) {
-            if (spotify_data['data']['code'] != 'not_playing') {
-              spotify_data = spotify_data['data']['data'];
-              await Storage.deleteData('playing_song');
-              await Storage.saveData(spotify_data, 'playing_song');
-            }
-          }
-        }
-        if (user_data['spotify_refresh_token'] == "") {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SpotifyConnectPage(
-                      username: user_data['username'],
-                      password: user_data['password'],
-                      uid: user_data['uid'])));
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Homepage(),
-            ),
-          );
-        }
-      }
     } else {
       setState(() {
         errorMessage = 'No Connection to the Server';

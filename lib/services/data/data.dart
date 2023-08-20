@@ -1,7 +1,7 @@
 import 'package:authentication/authentication.dart';
 import 'package:flutter/material.dart';
-import 'package:listen_together_app/services/secure_storage.dart';
-import 'package:listen_together_app/services/storage.dart';
+import 'package:listen_together_app/services/data/secure_storage.dart';
+import 'package:listen_together_app/services/data/storage.dart';
 import 'package:websockets/websockets.dart';
 import '/pages/auth/auth.dart';
 
