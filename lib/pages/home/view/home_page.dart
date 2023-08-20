@@ -47,18 +47,18 @@ class _HomepageState extends State<Homepage> {
           ]
         });
     bool try_again = true;
-    var tokens = await SecureStorage.getTokens();
-    String accessToken = '';
-    if (tokens != null) {
-      accessToken = tokens['access_token'];
+    var _tokens = await SecureStorage.getTokens();
+    Map tokens = {};
+    if (_tokens != null) {
+      tokens = _tokens;
     }
     while (try_again) {
       var connection = await Authentication.checkConnection();
       if (connection == true) {
         try_again = false;
-        await Websocket.renewConnection(accessToken);
+        await Websocket.renewConnection(tokens);
         setState(() => {song_data['title'] = 'Loading'});
-        update_song(username, accessToken);
+        update_song(username, tokens['access_token']);
       } else {
         Future.delayed(const Duration(milliseconds: 10000));
       }
@@ -75,9 +75,9 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
-  void update_song(username, accessToken) async {
+  void update_song(username, tokens) async {
     setState(() => loadingIndicator = null);
-    await Websocket.renewConnection(accessToken);
+    await Websocket.renewConnection(tokens);
     var channel = Websocket.channel;
     channel.sink
         .add(jsonEncode({"request": "start_song_loop", "username": username}));
@@ -108,10 +108,10 @@ class _HomepageState extends State<Homepage> {
 
   void checkLogin(context) async {
     var userData = await SecureStorage.getUserData();
-    var tokens = await SecureStorage.getTokens();
-    String accessToken = '';
-    if (tokens != null) {
-      accessToken = tokens['access_token'];
+    var _tokens = await SecureStorage.getTokens();
+    Map tokens = {};
+    if (_tokens != null) {
+      tokens = _tokens;
     }
     // debugPrint(user_data.toString());
     var _playing_song = await Storage.getData('playing_song');
@@ -136,7 +136,7 @@ class _HomepageState extends State<Homepage> {
         });
       }
     }
-    update_song(userData?['username'], accessToken);
+    update_song(userData?['username'], tokens);
   }
 
   @override
