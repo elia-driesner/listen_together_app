@@ -58,9 +58,9 @@ class _HomepageState extends State<Homepage> {
         try_again = false;
         await Websocket.renewConnection(tokens);
         setState(() => {song_data['title'] = 'Loading'});
-        update_song(username, tokens['access_token']);
+        update_song(username, tokens);
       } else {
-        Future.delayed(const Duration(milliseconds: 10000));
+        Future.delayed(const Duration(milliseconds: 200));
       }
     }
   }
@@ -79,31 +79,35 @@ class _HomepageState extends State<Homepage> {
     setState(() => loadingIndicator = null);
     await Websocket.renewConnection(tokens);
     var channel = Websocket.channel;
-    channel.sink
-        .add(jsonEncode({"request": "start_song_loop", "username": username}));
-    channel.stream.listen(
-      (playingSong) {
-        playingSong = json.decode(playingSong);
-        if (playingSong['success'] == null) {
-          setState(() {
-            song_data['fade_colors'] =
-                playingSong['item']['dominant_cover_colors'];
-            if (playingSong['item']['is_local'] == false) {
-              song_data['cover'] =
-                  playingSong['item']['album']['images'][1]['url'];
-            } else {
-              song_data['cover'] = '';
-            }
-            song_data['title'] = playingSong['item']['name'];
-            song_data['artist'] = playingSong['item']['artist_names'];
-          });
-          extractColors();
-        }
-      },
-      onDone: () {
-        reconnect(username);
-      },
-    );
+    if (channel != null) {
+      channel.sink.add(
+          jsonEncode({"request": "start_song_loop", "username": username}));
+      channel.stream.listen(
+        (playingSong) {
+          playingSong = json.decode(playingSong);
+          if (playingSong['success'] == null) {
+            setState(() {
+              song_data['fade_colors'] =
+                  playingSong['item']['dominant_cover_colors'];
+              if (playingSong['item']['is_local'] == false) {
+                song_data['cover'] =
+                    playingSong['item']['album']['images'][1]['url'];
+              } else {
+                song_data['cover'] = '';
+              }
+              song_data['title'] = playingSong['item']['name'];
+              song_data['artist'] = playingSong['item']['artist_names'];
+            });
+            extractColors();
+          }
+        },
+        onDone: () {
+          reconnect(username);
+        },
+      );
+    } else {
+      reconnect(username);
+    }
   }
 
   void checkLogin(context) async {

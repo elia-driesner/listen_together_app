@@ -12,6 +12,13 @@ class Websocket {
   static var channel;
 
   static Future<Map> getTicket(tokens) async {
+    String refresh_token;
+    debugPrint(tokens.toString());
+    if (tokens['refresh'] != null) {
+      refresh_token = tokens['refresh'];
+    } else {
+      refresh_token = tokens['refresh_token'];
+    }
     try {
       var userDataResp = await http.post(
         Uri.parse('${serverApiUrl}api/playback/get_ticket/'),
@@ -19,10 +26,10 @@ class Websocket {
       );
       Map decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
       if (decodedUserData['code'] == 'token_not_valid') {
-        debugPrint('token invalid');
+        debugPrint(tokens.toString());
         var tokenResp = await http.post(
             Uri.parse(serverApiUrl + 'api/token/refresh/'),
-            body: {'refresh': tokens['refresh']});
+            body: {'refresh': refresh_token});
         var decodedTokenResp =
             jsonDecode(utf8.decode(tokenResp.bodyBytes)) as Map;
         renewConnection(decodedTokenResp);
@@ -36,7 +43,6 @@ class Websocket {
   static Future renewConnection(tokens) async {
     if (channel != null) channel.sink.close();
     Map ticket = await getTicket(tokens);
-    debugPrint(ticket.toString());
     if (ticket['success'] == true) {
       channel = await WebSocketChannel.connect(
         Uri.parse(serverUrl + playingSongUrl + '?ticket=' + ticket['data']),
