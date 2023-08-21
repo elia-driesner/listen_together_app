@@ -12,29 +12,37 @@ class Websocket {
   static var channel;
 
   static Future<Map> getTicket(tokens) async {
-    String refresh_token;
-    debugPrint(tokens.toString());
+    String refreshToken;
     if (tokens['refresh'] != null) {
-      refresh_token = tokens['refresh'];
+      refreshToken = tokens['refresh'];
     } else {
-      refresh_token = tokens['refresh_token'];
+      refreshToken = tokens['refresh_token'];
     }
     try {
-      var userDataResp = await http.post(
+      var ticketResp = await http.post(
         Uri.parse('${serverApiUrl}api/playback/get_ticket/'),
         headers: {"Authorization": "Bearer " + tokens['access_token']},
       );
-      Map decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
-      if (decodedUserData['code'] == 'token_not_valid') {
-        debugPrint(tokens.toString());
+      Map decodedTicket = jsonDecode(utf8.decode(ticketResp.bodyBytes));
+      if (decodedTicket['code'] == 'token_not_valid') {
         var tokenResp = await http.post(
-            Uri.parse(serverApiUrl + 'api/token/refresh/'),
-            body: {'refresh': refresh_token});
+            Uri.parse('${serverApiUrl}api/token/refresh/'),
+            body: {'refresh': refreshToken});
         var decodedTokenResp =
             jsonDecode(utf8.decode(tokenResp.bodyBytes)) as Map;
-        renewConnection(decodedTokenResp);
+        return {
+          'success': false,
+          'data': null,
+          'code': 'token_expired',
+          'tokens': {
+            'refresh_token': refreshToken,
+            'access_token': decodedTokenResp['access']
+          }
+        };
+      } else {
+        debugPrint(decodedTicket.toString());
+        return {'data': decodedTicket['data'], 'success': true};
       }
-      return {'data': decodedUserData['data'], 'success': true};
     } on Exception catch (_) {
       return {'success': false, 'data': null};
     }
@@ -47,6 +55,16 @@ class Websocket {
       channel = await WebSocketChannel.connect(
         Uri.parse(serverUrl + playingSongUrl + '?ticket=' + ticket['data']),
       );
+    } else {
+      if (ticket['tokens'] != null) {
+        Map newTicket = await getTicket(ticket['tokens']);
+        if (newTicket['success'] == true) {
+          channel = await WebSocketChannel.connect(
+            Uri.parse(
+                serverUrl + playingSongUrl + '?ticket=' + newTicket['data']),
+          );
+        }
+      }
     }
   }
 

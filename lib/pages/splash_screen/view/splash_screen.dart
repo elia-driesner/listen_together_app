@@ -1,14 +1,11 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:authentication/authentication.dart';
-import '../../../services/data/data.dart';
-import 'package:listen_together_app/services/data/secure_storage.dart';
-import 'package:listen_together_app/services/data/storage.dart';
-import '../../home/home.dart';
-import 'package:spotify_api/spotify_api.dart';
-import '/pages/auth/auth.dart';
 import 'package:listen_together_app/services/functions/functions.dart';
+import 'package:listen_together_app/services/data/storage.dart';
+import 'package:listen_together_app/services/data/data.dart';
+import 'package:spotify_api/spotify_api.dart';
+import 'package:listen_together_app/pages/home/home.dart';
+import 'package:listen_together_app/pages/auth/auth.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,26 +15,57 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   Widget? loadingIndicator;
   String errorMessage = '';
 
   void loadApp() async {
+    while (true) {
+      bool connection = await Authentication.checkConnection();
+      if (connection) {
+        break;
+      } else {
+        setState(() {
+          errorMessage = 'No Connection to the Server';
+          loadingIndicator = null;
+        });
+      }
+      Future.delayed(const Duration(milliseconds: 200));
+    }
     setState(() {
       loadingIndicator = getLoadingIndicator();
       errorMessage = '';
     });
-    bool connection = await Authentication.checkConnection();
-    if (connection) {
-    } else {
-      setState(() {
-        errorMessage = 'No Connection to the Server';
-        loadingIndicator = null;
-      });
+
+    // ignore: use_build_context_synchronously
+    await Data.initApp(context);
+
+    var data = await Data.readData();
+    var tokens = data['tokens'];
+    var userData = data['user_data'];
+
+    if (userData != null) {
+      await formatPlayingSong(userData, tokens);
+      if (userData['spotify_refresh_token'] == "") {
+        _navigatorKey.currentState!.push(MaterialPageRoute(
+            builder: (context) => SpotifyConnectPage(
+                username: userData['username'],
+                password: userData['password'],
+                uid: userData['uid'])));
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Homepage(),
+          ),
+        );
+      }
     }
   }
 
   @override
   void initState() {
+    super.initState();
     loadApp();
   }
 
@@ -75,23 +103,22 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
           Container(
-              margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+              margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
               child: loadingIndicator),
           const Spacer(),
           Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
             child: Text(errorMessage,
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Theme.of(context).colorScheme.error,
                     fontSize: (MediaQuery.of(context).size.width * 0.042))),
           ),
-          Container(
-              child: Text(
+          Text(
             'V0.1 Beta Test',
             style: TextStyle(
                 color: Theme.of(context).primaryColorLight, fontSize: 14),
-          )),
+          ),
         ],
       )),
     );

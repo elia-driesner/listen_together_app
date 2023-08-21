@@ -46,19 +46,19 @@ class _HomepageState extends State<Homepage> {
             const Color.fromRGBO(0, 0, 0, 1),
           ]
         });
-    bool try_again = true;
+    bool tryAgain = true;
     var _tokens = await SecureStorage.getTokens();
     Map tokens = {};
     if (_tokens != null) {
       tokens = _tokens;
     }
-    while (try_again) {
+    while (tryAgain) {
       var connection = await Authentication.checkConnection();
       if (connection == true) {
-        try_again = false;
+        tryAgain = false;
         await Websocket.renewConnection(tokens);
         setState(() => {song_data['title'] = 'Loading'});
-        update_song(username, tokens);
+        updateSong(username, tokens);
       } else {
         Future.delayed(const Duration(milliseconds: 200));
       }
@@ -75,36 +75,40 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
-  void update_song(username, tokens) async {
+  void updateSong(username, tokens) async {
     setState(() => loadingIndicator = null);
     await Websocket.renewConnection(tokens);
     var channel = Websocket.channel;
     if (channel != null) {
-      channel.sink.add(
-          jsonEncode({"request": "start_song_loop", "username": username}));
-      channel.stream.listen(
-        (playingSong) {
-          playingSong = json.decode(playingSong);
-          if (playingSong['success'] == null) {
-            setState(() {
-              song_data['fade_colors'] =
-                  playingSong['item']['dominant_cover_colors'];
-              if (playingSong['item']['is_local'] == false) {
-                song_data['cover'] =
-                    playingSong['item']['album']['images'][1]['url'];
-              } else {
-                song_data['cover'] = '';
-              }
-              song_data['title'] = playingSong['item']['name'];
-              song_data['artist'] = playingSong['item']['artist_names'];
-            });
-            extractColors();
-          }
-        },
-        onDone: () {
-          reconnect(username);
-        },
-      );
+      try {
+        channel.sink.add(
+            jsonEncode({"request": "start_song_loop", "username": username}));
+        channel.stream.listen(
+          (playingSong) {
+            playingSong = json.decode(playingSong);
+            if (playingSong['success'] == null) {
+              setState(() {
+                song_data['fade_colors'] =
+                    playingSong['item']['dominant_cover_colors'];
+                if (playingSong['item']['is_local'] == false) {
+                  song_data['cover'] =
+                      playingSong['item']['album']['images'][1]['url'];
+                } else {
+                  song_data['cover'] = '';
+                }
+                song_data['title'] = playingSong['item']['name'];
+                song_data['artist'] = playingSong['item']['artist_names'];
+              });
+              extractColors();
+            }
+          },
+          onDone: () {
+            reconnect(username);
+          },
+        );
+      } catch (_) {
+        reconnect(username);
+      }
     } else {
       reconnect(username);
     }
@@ -140,7 +144,7 @@ class _HomepageState extends State<Homepage> {
         });
       }
     }
-    update_song(userData?['username'], tokens);
+    updateSong(userData?['username'], tokens);
   }
 
   @override

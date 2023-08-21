@@ -13,20 +13,20 @@ class Data {
   }
 
   static Future<Map> readData() async {
-    var _user_data = await SecureStorage.getUserData();
-    var _tokens = await SecureStorage.getTokens();
+    var userData = await SecureStorage.getUserData();
+    var tokens = await SecureStorage.getTokens();
 
-    return {'user_data': _user_data, 'tokens': _tokens};
+    return {'user_data': userData, 'tokens': tokens};
   }
 
   static Future<void> initApp(context) async {
     await init();
     // SecureStorage.clearData();
     var data = await readData();
-    var user_data = data['user_data'];
+    var userData = data['user_data'];
     var tokens = data['tokens'];
 
-    if (user_data == null || tokens == null) {
+    if (userData == null || tokens == null) {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
@@ -36,19 +36,18 @@ class Data {
         ),
       );
     } else {
-      await updateData(user_data, tokens);
+      await updateData(userData, tokens);
     }
   }
 
-  static Future<void> updateData(user_data, tokens) async {
-    String refresh_token = tokens['refresh_token'];
-    var new_data = await Authentication.RenewData(user_data, refresh_token);
-    if (new_data['success']) {
-      await SecureStorage.setTokens(new_data['tokens']);
-      await SecureStorage.setUserData(new_data['user_data']['data']);
+  static Future<void> updateData(userData, tokens) async {
+    var newData = await Authentication.RenewData(userData, tokens);
+    if (newData['success']) {
+      await SecureStorage.setTokens(newData['tokens']);
+      await SecureStorage.setUserData(newData['user_data']['data']);
     } else {
       debugPrint('no connection data.dart:58');
-      await SecureStorage.setTokens(user_data);
+      await SecureStorage.setTokens(userData);
       await SecureStorage.setUserData(tokens);
     }
   }

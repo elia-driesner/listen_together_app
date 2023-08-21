@@ -24,7 +24,7 @@ class Authentication {
       return {'error_message': errorMessage};
     }
     try {
-      var tokenResp = await client.post(Uri.parse(serverUrl + 'api/token/'),
+      var tokenResp = await client.post(Uri.parse('${serverUrl}api/token/'),
           body: {'username': username, 'password': password});
       decodedToken = jsonDecode(utf8.decode(tokenResp.bodyBytes)) as Map;
       if (decodedToken['access'] != null) {
@@ -87,7 +87,7 @@ class Authentication {
       };
       String encodedBody = jsonEncode(body);
       createUserRequest = await client
-          .post(Uri.parse(serverUrl + 'api/db/register/'), body: encodedBody);
+          .post(Uri.parse('${serverUrl}api/db/register/'), body: encodedBody);
       decodedUserRequest =
           jsonDecode(utf8.decode(createUserRequest.bodyBytes)) as Map;
       if (decodedUserRequest['error'] == '') {
@@ -99,7 +99,7 @@ class Authentication {
             break;
           }
           iteration++;
-          tokenRequest = await client.post(Uri.parse(serverUrl + 'api/token/'),
+          tokenRequest = await client.post(Uri.parse('${serverUrl}api/token/'),
               body: {'username': username, 'password': password});
           decodedToken = jsonDecode(utf8.decode(tokenRequest.bodyBytes)) as Map;
           await Future.delayed(const Duration(seconds: 1));
@@ -145,41 +145,42 @@ class Authentication {
     }
   }
 
-  static Future<Map> RenewData(user_data, refresh_token) async {
-    var client = http.Client();
-    if (await checkConnection(client: client)) {
-      var access_token = await client.post(
-          Uri.parse(serverUrl + 'api/token/refresh/'),
-          body: {'refresh': refresh_token});
-      var decoded_access_token =
-          jsonDecode(utf8.decode(access_token.bodyBytes));
-      if (decoded_access_token['code'] == 'token_not_valid') {
-        var tokenResp = await client.post(Uri.parse(serverUrl + 'api/token/'),
+  static Future<Map> RenewData(userData, tokens) async {
+    String refreshToken = tokens['refresh_token'];
+    Map<String, String> newTokens = {};
+    http.Client client = http.Client();
+
+    if (userData != null) {
+      var accessToken = await client.post(
+          Uri.parse('${serverUrl}api/token/refresh/'),
+          body: {'refresh': refreshToken});
+      var decodedAccessToken = jsonDecode(utf8.decode(accessToken.bodyBytes));
+      if (decodedAccessToken['code'] == 'token_not_valid') {
+        var tokenResp = await client.post(Uri.parse('${serverUrl}api/token/'),
             body: {
-              'username': user_data['username'],
-              'password': user_data['password']
+              'username': userData['username'],
+              'password': userData['password']
             });
-        var decodedToken = jsonDecode(utf8.decode(tokenResp.bodyBytes)) as Map;
-        decoded_access_token = decodedToken['access'];
+        newTokens['access_token'] =
+            jsonDecode(utf8.decode(tokenResp.bodyBytes)) as String;
       } else {
-        decoded_access_token = decoded_access_token['access'];
+        decodedAccessToken = decodedAccessToken['access'];
       }
 
       Map<String, String> tokens = {
-        'access_token': decoded_access_token,
-        'refresh_token': refresh_token
+        'access_token': decodedAccessToken,
+        'refresh_token': refreshToken
       };
       var userDataResp = await client.post(
         Uri.parse('${serverUrl}api/db/login/'),
-        headers: {"Authorization": "Bearer " + decoded_access_token},
+        headers: {'Authorization': 'Bearer $decodedAccessToken'},
         body: json.encode({
-          'username': user_data['username'],
-          'password': user_data['password']
+          'username': userData['username'],
+          'password': userData['password']
         }),
       );
       Map decodedUserData = jsonDecode(utf8.decode(userDataResp.bodyBytes));
-      decodedUserData = decodedUserData;
-      decodedUserData['data']['password'] = user_data['password'];
+      decodedUserData['data']['password'] = userData['password'];
       return {
         'error_message': '',
         'success': true,
@@ -191,28 +192,15 @@ class Authentication {
     }
   }
 
-  static Future<bool> checkConnection({client = null}) async {
-    bool dropClient = false;
-    if (client == null) {
-      client = http.Client();
-      dropClient = true;
-    }
+  static Future<bool> checkConnection() async {
     try {
-      var serverResp = await client.get(
+      await http.get(
         Uri.parse(serverUrl),
       );
     } on Exception catch (_) {
-      if (dropClient) {
-        client.close();
-      }
       return (false);
     }
-    if (dropClient) {
-      client.close();
-    }
+
     return (true);
   }
-
-  void ChangePassword(username, password) {}
-  void DeleteAcc(username, password) {}
 }

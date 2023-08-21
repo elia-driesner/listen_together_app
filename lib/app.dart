@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'pages/home/home.dart';
 import 'pages/splash_screen/splash_screen.dart';
 
 class App extends StatelessWidget {
@@ -7,6 +6,6 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: SplashScreen());
+    return const SplashScreen();
   }
 }
