@@ -147,7 +147,6 @@ class Authentication {
 
   static Future<Map> RenewData(userData, tokens) async {
     String refreshToken = tokens['refresh_token'];
-    Map<String, String> newTokens = {};
     http.Client client = http.Client();
 
     if (userData != null) {
@@ -161,8 +160,8 @@ class Authentication {
               'username': userData['username'],
               'password': userData['password']
             });
-        newTokens['access_token'] =
-            jsonDecode(utf8.decode(tokenResp.bodyBytes)) as String;
+        var decodedResp = jsonDecode(utf8.decode(tokenResp.bodyBytes)) as Map;
+        decodedAccessToken = decodedResp['access'];
       } else {
         decodedAccessToken = decodedAccessToken['access'];
       }

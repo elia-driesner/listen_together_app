@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:listen_together_app/services/data/secure_storage.dart';
 import 'package:listen_together_app/pages/auth/auth.dart';
+import 'package:websockets/websockets.dart';
 
 class SettingsPage extends StatefulWidget {
   SettingsPage({super.key});
@@ -20,6 +21,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   logout() async {
     await SecureStorage.clearData();
+    Websocket.disconnect();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
