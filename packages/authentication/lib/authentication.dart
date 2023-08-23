@@ -10,11 +10,11 @@ class Authentication {
 
   static Future<Map> SignIn(username, password) async {
     var client = http.Client();
-    var decodedToken;
+    Map decodedToken;
     var decodedUserData;
     var errorMessage = '';
     try {
-      var serverResp = await client.get(
+      await client.get(
         Uri.parse(serverUrl),
       );
     } on Exception catch (_) {
