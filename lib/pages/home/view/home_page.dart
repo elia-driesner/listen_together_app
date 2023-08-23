@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
@@ -29,6 +30,7 @@ class _HomepageState extends State<Homepage> {
   };
   String errorMessage = '';
   Widget? loadingIndicator;
+  bool stopListening = false;
 
   void reconnect(username) async {
     if (Platform.isAndroid) {
@@ -83,30 +85,37 @@ class _HomepageState extends State<Homepage> {
       try {
         channel.sink.add(
             jsonEncode({"request": "start_song_loop", "username": username}));
-        channel.stream.listen(
+        late StreamSubscription subscription;
+        subscription = channel.stream.listen(
           (playingSong) {
-            playingSong = json.decode(playingSong);
-            if (playingSong['success'] == null) {
-              setState(() {
-                song_data['fade_colors'] =
-                    playingSong['item']['dominant_cover_colors'];
-                if (playingSong['item']['is_local'] == false) {
-                  song_data['cover'] =
-                      playingSong['item']['album']['images'][1]['url'];
-                } else {
-                  song_data['cover'] = '';
-                }
-                song_data['title'] = playingSong['item']['name'];
-                song_data['artist'] = playingSong['item']['artist_names'];
-              });
-              extractColors();
+            if (stopListening == true) {
+              subscription.cancel();
+            } else {
+              playingSong = json.decode(playingSong);
+              if (playingSong['success'] == null) {
+                setState(() {
+                  song_data['fade_colors'] =
+                      playingSong['item']['dominant_cover_colors'];
+                  if (playingSong['item']['is_local'] == false) {
+                    song_data['cover'] =
+                        playingSong['item']['album']['images'][1]['url'];
+                  } else {
+                    song_data['cover'] = '';
+                  }
+                  song_data['title'] = playingSong['item']['name'];
+                  song_data['artist'] = playingSong['item']['artist_names'];
+                });
+                extractColors();
+              }
             }
           },
           onDone: () {
-            reconnect(username);
+            if (stopListening == false) {
+              reconnect(username);
+            }
           },
         );
-      } catch (_) {
+      } on Exception catch (e) {
         reconnect(username);
       }
     } else {
