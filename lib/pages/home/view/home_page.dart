@@ -19,6 +19,8 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  late Map safeUserData;
+  late Map safeTokens;
   Map song_data = {
     'cover': '',
     'title': 'Spotify not playing',
@@ -31,6 +33,23 @@ class _HomepageState extends State<Homepage> {
   String errorMessage = '';
   Widget? loadingIndicator;
   bool stopListening = false;
+  late StreamSubscription subscription;
+
+  void navigationHandeler(page) {
+    setState(() {
+      stopListening = true;
+      subscription.cancel();
+    });
+    Websocket.channel.sink.close();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => page,
+      ),
+    ).then((_) {
+      updateSong(safeUserData['username'], safeTokens);
+    });
+  }
 
   void reconnect(username) async {
     if (Platform.isAndroid) {
@@ -79,13 +98,13 @@ class _HomepageState extends State<Homepage> {
 
   void updateSong(username, tokens) async {
     setState(() => loadingIndicator = null);
+    stopListening = false;
     await Websocket.renewConnection(tokens);
     var channel = Websocket.channel;
     if (channel != null) {
       try {
         channel.sink.add(
             jsonEncode({"request": "start_song_loop", "username": username}));
-        late StreamSubscription subscription;
         subscription = channel.stream.listen(
           (playingSong) {
             if (stopListening == true) {
@@ -129,6 +148,10 @@ class _HomepageState extends State<Homepage> {
     Map tokens = {};
     if (_tokens != null) {
       tokens = _tokens;
+      safeTokens = tokens;
+    }
+    if (userData != null) {
+      safeUserData = userData;
     }
     // debugPrint(user_data.toString());
     var _playing_song = await Storage.getData('playing_song');
@@ -159,7 +182,18 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      stopListening = false;
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) => checkLogin(context));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    setState(() {
+      stopListening = true;
+    });
   }
 
   @override
@@ -250,15 +284,6 @@ class _HomepageState extends State<Homepage> {
                             fontSize: 23),
                       )),
                   const Spacer(),
-                  // Container(
-                  //     margin: EdgeInsets.fromLTRB(
-                  //         0, 0, 0, MediaQuery.of(context).size.width * 0.08),
-                  //     child: Text(
-                  //       'Listen with your Friends',
-                  //       style: TextStyle(
-                  //           color: Theme.of(context).primaryColorLight,
-                  //           fontSize: 29),
-                  //     )),
                   Container(
                       margin: EdgeInsets.fromLTRB(
                           0,
@@ -266,19 +291,15 @@ class _HomepageState extends State<Homepage> {
                           0,
                           MediaQuery.of(context).size.height * 0.02),
                       child: AccentButton(
-                        [
-                          (MediaQuery.of(context).size.width * 0.8).toDouble(),
-                          (MediaQuery.of(context).size.height * 0.062)
-                              .toDouble()
-                        ],
-                        'Start Listen Together',
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const StartListenTogether(),
-                          ),
-                        ),
-                      )),
+                          [
+                            (MediaQuery.of(context).size.width * 0.8)
+                                .toDouble(),
+                            (MediaQuery.of(context).size.height * 0.062)
+                                .toDouble()
+                          ],
+                          'Start Listen Together',
+                          () =>
+                              navigationHandeler(const StartListenTogether()))),
                   Container(
                       margin: EdgeInsets.fromLTRB(
                           0, 0, 0, MediaQuery.of(context).size.height * 0.03),
@@ -290,13 +311,8 @@ class _HomepageState extends State<Homepage> {
                                 .toDouble()
                           ],
                           'Join Listen Together',
-                          () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const JoinListenTogether(),
-                                ),
-                              ))),
+                          () =>
+                              navigationHandeler(const JoinListenTogether()))),
                 ],
               ),
             ),
