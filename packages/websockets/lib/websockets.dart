@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ class Websocket {
   static String serverApiUrl = dotenv.env['SERVER_URL'].toString();
   static String serverUrl = dotenv.env['WEBSOCKETS_URL'].toString();
   static String playingSongUrl = dotenv.env['PLAYING_SONG_URL'].toString();
-  static final streamController = StreamController.broadcast();
   static var channel;
 
   static Future<Map> getTicket(tokens) async {
@@ -57,7 +55,6 @@ class Websocket {
       channel = await WebSocketChannel.connect(
         Uri.parse(serverUrl + playingSongUrl + '?ticket=' + ticket['data']),
       );
-      await streamController.addStream(channel.stream);
     } else {
       if (ticket['tokens'] != null) {
         Map newTicket = await getTicket(ticket['tokens']);
@@ -66,7 +63,6 @@ class Websocket {
             Uri.parse(
                 serverUrl + playingSongUrl + '?ticket=' + newTicket['data']),
           );
-          await streamController.addStream(channel.stream);
         }
       }
     }
