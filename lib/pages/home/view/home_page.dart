@@ -36,11 +36,6 @@ class _HomepageState extends State<Homepage> {
   late StreamSubscription subscription;
 
   void navigationHandeler(page) {
-    setState(() {
-      stopListening = true;
-      subscription.cancel();
-    });
-    Websocket.channel.sink.close();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -99,13 +94,12 @@ class _HomepageState extends State<Homepage> {
   void updateSong(username, tokens) async {
     setState(() => loadingIndicator = null);
     stopListening = false;
-    await Websocket.renewConnection(tokens);
     var channel = Websocket.channel;
     if (channel != null) {
       try {
-        channel.sink.add(
+        Websocket.streamController.sink.add(
             jsonEncode({"request": "start_song_loop", "username": username}));
-        subscription = channel.stream.listen(
+        Websocket.streamController.stream.listen(
           (playingSong) {
             if (stopListening == true) {
               subscription.cancel();
@@ -176,6 +170,7 @@ class _HomepageState extends State<Homepage> {
         });
       }
     }
+    await Websocket.renewConnection(tokens);
     updateSong(userData?['username'], tokens);
   }
 
