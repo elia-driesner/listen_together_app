@@ -212,7 +212,7 @@ class _HomepageState extends State<Homepage> {
                                   end: Alignment.topRight,
                                   colors: song_data['fade_colors']))),
                       Opacity(
-                        opacity: 0.15,
+                        opacity: 0.05,
                         child: Image.asset(
                           'assets/background/noise.png',
                           height: double.infinity,
