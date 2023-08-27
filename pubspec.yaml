@@ -42,6 +42,7 @@ flutter:
       - assets/icons/empty_profile_pic.png
       - assets/icons/logo/ios.png
       - assets/icons/music_icon.png
+      - assets/background/noise.png
 
 flutter_launcher_icons:
   android: true

@@ -203,12 +203,25 @@ class _HomepageState extends State<Homepage> {
         body: Stack(
           children: [
             song_data['fade_colors'] != []
-                ? Container(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.bottomLeft,
-                            end: Alignment.topRight,
-                            colors: song_data['fade_colors'])))
+                ? Stack(
+                    children: [
+                      Container(
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: Alignment.bottomLeft,
+                                  end: Alignment.topRight,
+                                  colors: song_data['fade_colors']))),
+                      Opacity(
+                        opacity: 0.15,
+                        child: Image.asset(
+                          'assets/background/noise.png',
+                          height: double.infinity,
+                          width: double.infinity,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ],
+                  )
                 : Container(),
             SafeArea(
               child: Align(
