@@ -9,6 +9,7 @@ import 'package:listen_together_app/pages/settings/settings.dart';
 import 'package:websockets/websockets.dart';
 import 'package:authentication/authentication.dart';
 import 'package:listen_together_app/services/functions/functions.dart';
+import 'bottom_sheet.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -33,22 +34,6 @@ class _HomepageState extends State<Homepage> {
   Widget? loadingIndicator;
   bool stopListening = false;
   late StreamSubscription subscription;
-
-  void navigationHandeler(page) {
-    setState(() {
-      stopListening = true;
-      subscription.cancel();
-    });
-    Websocket.channel.sink.close();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => page,
-      ),
-    ).then((_) {
-      updateSong(safeUserData['username'], safeTokens);
-    });
-  }
 
   void reconnect(username) async {
     setState(() => {
@@ -306,29 +291,11 @@ class _HomepageState extends State<Homepage> {
                           MediaQuery.of(context).size.height * 0.05,
                           0,
                           MediaQuery.of(context).size.height * 0.02),
-                      child: AccentButton(
-                          [
-                            (MediaQuery.of(context).size.width * 0.8)
-                                .toDouble(),
-                            (MediaQuery.of(context).size.height * 0.062)
-                                .toDouble()
-                          ],
-                          'Start Listen Together',
-                          () =>
-                              navigationHandeler(const StartListenTogether()))),
-                  Container(
-                      margin: EdgeInsets.fromLTRB(
-                          0, 0, 0, MediaQuery.of(context).size.height * 0.03),
-                      child: TransparentButton(
-                          [
-                            (MediaQuery.of(context).size.width * 0.8)
-                                .toDouble(),
-                            (MediaQuery.of(context).size.height * 0.062)
-                                .toDouble()
-                          ],
-                          'Join Listen Together',
-                          () =>
-                              navigationHandeler(const JoinListenTogether()))),
+                      child: AccentButton([
+                        (MediaQuery.of(context).size.width * 0.8).toDouble(),
+                        (MediaQuery.of(context).size.height * 0.062).toDouble()
+                      ], 'Listen Together',
+                          () => {CustomBottomSheet.build(context)})),
                 ],
               ),
             ),
