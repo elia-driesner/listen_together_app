@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/pages/listen_together/listen_together.dart';
 import 'package:listen_together_app/services/data/secure_storage.dart';
@@ -10,6 +8,7 @@ import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:listen_together_app/pages/settings/settings.dart';
 import 'package:websockets/websockets.dart';
 import 'package:authentication/authentication.dart';
+import 'package:listen_together_app/services/functions/functions.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -52,13 +51,8 @@ class _HomepageState extends State<Homepage> {
   }
 
   void reconnect(username) async {
-    if (Platform.isAndroid) {
-      loadingIndicator = const CircularProgressIndicator();
-    } else {
-      loadingIndicator = const CupertinoActivityIndicator(radius: 18);
-    }
     setState(() => {
-          loadingIndicator,
+          loadingIndicator = getLoadingIndicator(),
           song_data['title'] = 'No Connection',
           song_data['artist'] = '',
           song_data['cover'] = '',
@@ -87,7 +81,7 @@ class _HomepageState extends State<Homepage> {
             await Websocket.renewConnection(tokens);
           }
         }
-        setState(() => {song_data['title'] = 'Loading'});
+        setState(() => song_data['title'] = 'Loading');
         updateSong(username, tokens);
       } else {
         Future.delayed(const Duration(milliseconds: 200));
@@ -163,10 +157,10 @@ class _HomepageState extends State<Homepage> {
       safeUserData = userData;
     }
     // debugPrint(user_data.toString());
-    var _playing_song = await Storage.getData('playing_song');
-    var playingSong;
-    if (_playing_song != null) {
-      playingSong = _playing_song;
+    var playing_song = Storage.getData('playing_song');
+    Map playingSong;
+    if (playing_song != null) {
+      playingSong = playing_song;
       setState(() {
         userData = userData;
 
