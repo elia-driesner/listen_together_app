@@ -3,10 +3,8 @@ import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:listen_together_app/services/functions/functions.dart';
 
 class CustomBottomSheet {
-  static final Function setModalState = () => {};
-
   static TextEditingController idController = TextEditingController();
-  static double nameMargin = 0.1;
+  static double nameMargin = 0.05;
   static List<double> nameSize = [0.8, 0.1];
 
   static String errorMessage = '';
@@ -15,16 +13,18 @@ class CustomBottomSheet {
 
   static String text = "Start";
 
-  static void moveName() async {
+  static void moveName(setModalState) async {
     setModalState(() => {
+          loadingIndicator = getLoadingIndicator(),
           nameMargin = 0.02,
           nameSize = [0.6, 0.09]
         });
   }
 
-  static void moveNameBack() async {
+  static void moveNameBack(setModalState) async {
     setModalState(() => {
-          nameMargin = 0.1,
+          loadingIndicator = null,
+          nameMargin = 0.05,
           nameSize = [0.8, 0.1]
         });
   }
@@ -40,11 +40,10 @@ class CustomBottomSheet {
         builder: (context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
-            setModalState = setModalState;
             return Padding(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: Container(
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -77,37 +76,56 @@ class CustomBottomSheet {
                     Container(
                       margin: EdgeInsets.fromLTRB(
                           0, 0, 0, MediaQuery.of(context).size.height * 0.05),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Column(
                         children: [
-                          Container(
-                              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              child: AccentButton(
-                                [
-                                  (MediaQuery.of(context).size.width * 0.4)
-                                      .toDouble(),
-                                  (MediaQuery.of(context).size.height * 0.062)
-                                      .toDouble()
-                                ],
-                                text,
-                                () => setModalState(() => {text = 'End'}),
-                              )),
-                          Container(
-                              margin: EdgeInsets.fromLTRB(
-                                  MediaQuery.of(context).size.width * 0.05,
-                                  0,
-                                  0,
-                                  0),
-                              child: AccentButton(
-                                [
-                                  (MediaQuery.of(context).size.width * 0.4)
-                                      .toDouble(),
-                                  (MediaQuery.of(context).size.height * 0.062)
-                                      .toDouble()
-                                ],
-                                'Join',
-                                () => {},
-                              )),
+                          if (loadingIndicator == null)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                    margin:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    child: AccentButton(
+                                      [
+                                        (MediaQuery.of(context).size.width *
+                                                0.4)
+                                            .toDouble(),
+                                        (MediaQuery.of(context).size.height *
+                                                0.062)
+                                            .toDouble()
+                                      ],
+                                      text,
+                                      () => moveName(setModalState),
+                                    )),
+                                Container(
+                                    margin: EdgeInsets.fromLTRB(
+                                        MediaQuery.of(context).size.width *
+                                            0.05,
+                                        0,
+                                        0,
+                                        0),
+                                    child: AccentButton(
+                                      [
+                                        (MediaQuery.of(context).size.width *
+                                                0.4)
+                                            .toDouble(),
+                                        (MediaQuery.of(context).size.height *
+                                                0.062)
+                                            .toDouble()
+                                      ],
+                                      'Join',
+                                      () => Navigator.pop(context),
+                                    )),
+                              ],
+                            )
+                          else
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: loadingIndicator)
+                                ])
                         ],
                       ),
                     )
@@ -115,7 +133,6 @@ class CustomBottomSheet {
                 ),
               ),
             );
-            ;
           });
         });
   }

@@ -295,7 +295,7 @@ class _HomepageState extends State<Homepage> {
                         (MediaQuery.of(context).size.width * 0.8).toDouble(),
                         (MediaQuery.of(context).size.height * 0.062).toDouble()
                       ], 'Listen Together',
-                          () => {CustomBottomSheet.build(context)})),
+                          () => CustomBottomSheet.build(context))),
                 ],
               ),
             ),
