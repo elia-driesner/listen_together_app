@@ -77,7 +77,16 @@ class _HomepageState extends State<Homepage> {
       var connection = await Authentication.checkConnection();
       if (connection == true) {
         tryAgain = false;
-        await Websocket.renewConnection(tokens);
+        try {
+          await Websocket.renewConnection(tokens);
+        } on Exception {
+          var _tokens = await SecureStorage.getTokens();
+          Map tokens = {};
+          if (_tokens != null) {
+            tokens = _tokens;
+            await Websocket.renewConnection(tokens);
+          }
+        }
         setState(() => {song_data['title'] = 'Loading'});
         updateSong(username, tokens);
       } else {
@@ -212,7 +221,7 @@ class _HomepageState extends State<Homepage> {
                                   end: Alignment.topRight,
                                   colors: song_data['fade_colors']))),
                       Opacity(
-                        opacity: 0.05,
+                        opacity: 0.08,
                         child: Image.asset(
                           'assets/background/noise.png',
                           height: double.infinity,
