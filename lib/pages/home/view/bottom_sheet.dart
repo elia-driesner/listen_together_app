@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:listen_together_app/services/functions/functions.dart';
+import 'package:websockets/websockets.dart';
+import './../services/listener.dart';
 
 class CustomBottomSheet {
   static TextEditingController idController = TextEditingController();
@@ -11,7 +15,7 @@ class CustomBottomSheet {
   static Widget? loadingIndicator;
   static String roomID = '';
 
-  static String text = "Start";
+  static late var homeContext;
 
   static void moveName(setModalState) async {
     setModalState(() => {
@@ -29,7 +33,60 @@ class CustomBottomSheet {
         });
   }
 
+  static bool checkID(id) {
+    List<String> allowedChars = [
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '0'
+    ];
+    if (id.length == 4) {
+      for (int i = 0; i < 4; i++) {
+        if (allowedChars.contains(id[i]) == false) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  static void start(setModalState, id) async {
+    id = id.toString();
+    if (checkID(id) == true) {
+      moveName(setModalState);
+      Websocket.channel.sink
+          .add(jsonEncode({'request': 'start_listen_together', 'id': id}));
+    } else {
+      setModalState(
+          () => {loadingIndicator = null, errorMessage = 'Invalid ID'});
+    }
+  }
+
+  static void showError(setModalState, message) {
+    setModalState(() => errorMessage = message);
+  }
+
+  static void setSheetLoadingIndicator(setModalState, state) {
+    if (state == true) {
+      setModalState(() => loadingIndicator = getLoadingIndicator());
+    } else {
+      setModalState(() => loadingIndicator = null);
+    }
+  }
+
+  static void close() {
+    Navigator.pop(homeContext);
+  }
+
   static Future build(BuildContext context) {
+    homeContext = context;
     return showModalBottomSheet(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -40,6 +97,8 @@ class CustomBottomSheet {
         builder: (context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
+            SocketListener.initSheet(
+                showError, moveNameBack, setModalState, close);
             return Padding(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -73,6 +132,23 @@ class CustomBottomSheet {
                         ),
                       ),
                     ),
+                    loadingIndicator == null
+                        ? Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0,
+                                MediaQuery.of(context).size.height * 0.01),
+                            child: errorMessage != ''
+                                ? Text(
+                                    errorMessage,
+                                    style: TextStyle(
+                                        color:
+                                            Theme.of(context).colorScheme.error,
+                                        fontSize: 18),
+                                  )
+                                : Text(
+                                    '',
+                                    style: TextStyle(fontSize: 18),
+                                  ))
+                        : Container(),
                     Container(
                       margin: EdgeInsets.fromLTRB(
                           0, 0, 0, MediaQuery.of(context).size.height * 0.05),
@@ -94,8 +170,9 @@ class CustomBottomSheet {
                                                 0.062)
                                             .toDouble()
                                       ],
-                                      text,
-                                      () => moveName(setModalState),
+                                      'Start',
+                                      () => start(
+                                          setModalState, idController.text),
                                     )),
                                 Container(
                                     margin: EdgeInsets.fromLTRB(

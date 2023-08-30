@@ -12,13 +12,26 @@ class SocketListener {
   static late Function removeSongData;
   static late Function setTitle;
 
-  static Future<void> init(setFadeColorsFunc, setLoadingIndicatorFunc,
+  static late Function showError;
+  static late Function moveNameBack;
+  static late Function setModalState;
+  static late Function closeSheet;
+
+  static Future<void> initHome(setFadeColorsFunc, setLoadingIndicatorFunc,
       showSongDataFunc, removeSongDataFunc, setTitleFunc) async {
     setFadeColors = setFadeColorsFunc;
     setLoadingIndicator = setLoadingIndicatorFunc;
     showSongData = showSongDataFunc;
     removeSongData = removeSongDataFunc;
     setTitle = setTitleFunc;
+  }
+
+  static Future<void> initSheet(showErrorFunc, moveNameBackFunc,
+      setModalStateFunc, closeSheetFunc) async {
+    showError = showErrorFunc;
+    moveNameBack = moveNameBackFunc;
+    setModalState = setModalStateFunc;
+    closeSheet = closeSheetFunc;
   }
 
   static void listen(username, tokens) {
@@ -31,9 +44,20 @@ class SocketListener {
         channel.stream.listen(
           (response) {
             response = json.decode(response);
-            if (response['success'] == null) {
-              if (response['item'] != null) {
-                showSong(response);
+            debugPrint(response.toString());
+            if (response['success'] == true) {
+              if (response['code'] == 'playing_song') {
+                showSong(response['data']);
+              } else if (response['code'] == 'response') {
+                if (response['detail'] == 'listen_together_started') {
+                  showSheetCallback(response);
+                }
+              }
+            } else {
+              if (response['code'] == 'response') {
+                if (response['error'] == 'invalid_room_id') {
+                  showSheetCallback(response);
+                }
               }
             }
           },
@@ -95,5 +119,12 @@ class SocketListener {
     extractColors(playingSong);
   }
 
-  static void sheetListener(setModalState) {}
+  static void showSheetCallback(callback) {
+    if (callback['error'] == 'invalid_room_id') {
+      moveNameBack(setModalState);
+      showError('ID already exists');
+    } else if (callback['detail'] == 'listen_together_started') {
+      closeSheet();
+    }
+  }
 }

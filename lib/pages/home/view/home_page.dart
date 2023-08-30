@@ -79,8 +79,8 @@ class _HomepageState extends State<Homepage> {
   }
 
   void checkLogin(context) async {
-    await SocketListener.init(setFadeColors, setLoadingIndicator, showSongData,
-        removeSongData, setTitle);
+    await SocketListener.initHome(setFadeColors, setLoadingIndicator,
+        showSongData, removeSongData, setTitle);
     var userData = await SecureStorage.getUserData();
     var _tokens = await SecureStorage.getTokens();
     Map tokens = {};
