@@ -114,7 +114,7 @@ class _HomepageState extends State<Homepage> {
         });
       }
     }
-    SocketListener.homeListener(userData?['username'], tokens);
+    SocketListener.listen(userData?['username'], tokens);
   }
 
   @override
