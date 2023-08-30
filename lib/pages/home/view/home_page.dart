@@ -10,6 +10,7 @@ import 'package:websockets/websockets.dart';
 import 'package:authentication/authentication.dart';
 import 'package:listen_together_app/services/functions/functions.dart';
 import 'bottom_sheet.dart';
+import './../services/listener.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -35,7 +36,32 @@ class _HomepageState extends State<Homepage> {
   bool stopListening = false;
   late StreamSubscription subscription;
 
-  void reconnect(username) async {
+  void setFadeColors(colors) {
+    setState(() => song_data['fade_colors'] = colors);
+  }
+
+  void setLoadingIndicator(state) {
+    if (state == true) {
+      setState(() => loadingIndicator = getLoadingIndicator());
+    } else {
+      setState(() => loadingIndicator = null);
+    }
+  }
+
+  void showSongData(playingSong) {
+    setState(() {
+      song_data['fade_colors'] = playingSong['item']['dominant_cover_colors'];
+      if (playingSong['item']['is_local'] == false) {
+        song_data['cover'] = playingSong['item']['album']['images'][1]['url'];
+      } else {
+        song_data['cover'] = '';
+      }
+      song_data['title'] = playingSong['item']['name'];
+      song_data['artist'] = playingSong['item']['artist_names'];
+    });
+  }
+
+  void removeSongData() {
     setState(() => {
           loadingIndicator = getLoadingIndicator(),
           song_data['title'] = 'No Connection',
@@ -46,91 +72,15 @@ class _HomepageState extends State<Homepage> {
             const Color.fromRGBO(0, 0, 0, 1),
           ]
         });
-    bool tryAgain = true;
-    var _tokens = await SecureStorage.getTokens();
-    Map tokens = {};
-    if (_tokens != null) {
-      tokens = _tokens;
-    }
-    while (tryAgain) {
-      var connection = await Authentication.checkConnection();
-      if (connection == true) {
-        tryAgain = false;
-        try {
-          await Websocket.renewConnection(tokens);
-        } on Exception {
-          var _tokens = await SecureStorage.getTokens();
-          Map tokens = {};
-          if (_tokens != null) {
-            tokens = _tokens;
-            await Websocket.renewConnection(tokens);
-          }
-        }
-        setState(() => song_data['title'] = 'Loading');
-        updateSong(username, tokens);
-      } else {
-        Future.delayed(const Duration(milliseconds: 200));
-      }
-    }
   }
 
-  Future<void> extractColors() async {
-    List<Color> colors = [];
-    song_data['fade_colors'].forEach((var color) => {
-          colors.add(Color.fromRGBO(color[0], color[1], color[2], 1)),
-        });
-    if (colors.isNotEmpty) {
-      setState(() => song_data['fade_colors'] = colors);
-    }
-  }
-
-  void updateSong(username, tokens) async {
-    setState(() => loadingIndicator = null);
-    stopListening = false;
-    await Websocket.renewConnection(tokens);
-    var channel = Websocket.channel;
-    if (channel != null) {
-      try {
-        channel.sink.add(
-            jsonEncode({"request": "start_song_loop", "username": username}));
-        subscription = channel.stream.listen(
-          (playingSong) {
-            if (stopListening == true) {
-              subscription.cancel();
-            } else {
-              playingSong = json.decode(playingSong);
-              if (playingSong['success'] == null) {
-                setState(() {
-                  song_data['fade_colors'] =
-                      playingSong['item']['dominant_cover_colors'];
-                  if (playingSong['item']['is_local'] == false) {
-                    song_data['cover'] =
-                        playingSong['item']['album']['images'][1]['url'];
-                  } else {
-                    song_data['cover'] = '';
-                  }
-                  song_data['title'] = playingSong['item']['name'];
-                  song_data['artist'] = playingSong['item']['artist_names'];
-                });
-                extractColors();
-              }
-            }
-          },
-          onDone: () {
-            if (stopListening == false) {
-              reconnect(username);
-            }
-          },
-        );
-      } on Exception catch (e) {
-        reconnect(username);
-      }
-    } else {
-      reconnect(username);
-    }
+  void setTitle(title) {
+    setState(() => song_data['title'] = title);
   }
 
   void checkLogin(context) async {
+    await SocketListener.init(setFadeColors, setLoadingIndicator, showSongData,
+        removeSongData, setTitle);
     var userData = await SecureStorage.getUserData();
     var _tokens = await SecureStorage.getTokens();
     Map tokens = {};
@@ -156,7 +106,7 @@ class _HomepageState extends State<Homepage> {
         song_data['title'] = playingSong['item']['name'];
         song_data['artist'] = playingSong['item']['artist_names'];
       });
-      extractColors();
+      SocketListener.extractColors(playingSong);
     } else {
       if (userData != null) {
         setState(() {
@@ -164,15 +114,12 @@ class _HomepageState extends State<Homepage> {
         });
       }
     }
-    updateSong(userData?['username'], tokens);
+    SocketListener.homeListener(userData?['username'], tokens);
   }
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      stopListening = false;
-    });
     WidgetsBinding.instance.addPostFrameCallback((_) => checkLogin(context));
   }
 
