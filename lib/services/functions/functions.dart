@@ -18,13 +18,17 @@ Widget getLoadingIndicator() {
 Future formatPlayingSong(userData, tokens) async {
   var spotifyData = await SpotifyAPI.GetPlayingSong(
       userData['username'], userData['password'], tokens['access_token']);
-  if (spotifyData['data'] != null) {
+  if (spotifyData['success'] == true) {
     if (spotifyData['data']['success'] == true) {
       if (spotifyData['data']['code'] != 'not_playing') {
         spotifyData = spotifyData['data']['data'];
         await Storage.deleteData('playing_song');
         await Storage.saveData(spotifyData, 'playing_song');
       }
+    }
+  } else {
+    if (spotifyData['error'] == 'spotify_not_connected') {
+      await Storage.deleteData('playing_song');
     }
   }
 }

@@ -47,11 +47,13 @@ class _SplashScreenState extends State<SplashScreen> {
     if (userData != null) {
       await formatPlayingSong(userData, tokens);
       if (userData['spotify_refresh_token'] == "") {
-        _navigatorKey.currentState!.push(MaterialPageRoute(
-            builder: (context) => SpotifyConnectPage(
-                username: userData['username'],
-                password: userData['password'],
-                uid: userData['uid'])));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SpotifyConnectPage(
+                    username: userData['username'],
+                    password: userData['password'],
+                    uid: userData['uid'])));
       } else {
         Navigator.pushReplacement(
           context,

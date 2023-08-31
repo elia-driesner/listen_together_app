@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SpotifyAPI {
   static String client_id = dotenv.env['SPOTIFY_CLIENT_ID'].toString();
-  static var redirect_uri = dotenv.env['SERVER_URL'].toString() +
+  static String redirect_uri = dotenv.env['SERVER_URL'].toString() +
       dotenv.env['SPOTIFY_REDIRECT_URL'].toString();
   static Map<String, dynamic> url_map = {
     'login': 'https://accounts.spotify.com/authorize?'
@@ -33,17 +33,21 @@ class SpotifyAPI {
     }
   }
 
-  static Future<Map> GetPlayingSong(username, password, access_token) async {
-    String server_url = dotenv.env['SERVER_URL'].toString();
-    String url = '${server_url}api/playback/playing_song/';
+  static Future<Map> GetPlayingSong(username, password, accessToken) async {
+    String serverUrl = dotenv.env['SERVER_URL'].toString();
+    String url = '${serverUrl}api/playback/playing_song/';
     try {
       String encodedBody =
           jsonEncode({"password": password, "username": username});
-      var playing_song = await client.post(Uri.parse(url),
-          body: encodedBody,
-          headers: {"Authorization": "Bearer " + access_token});
-      var dec_playing_song = jsonDecode(utf8.decode(playing_song.bodyBytes));
-      return {'data': dec_playing_song, 'error_message': '', 'success': true};
+      var playingSong = await client.post(Uri.parse(url),
+          body: encodedBody, headers: {"Authorization": "Bearer $accessToken"});
+      var decPlayingSong = jsonDecode(utf8.decode(playingSong.bodyBytes));
+      if (decPlayingSong['success'] == true) {
+        return {'data': decPlayingSong, 'error_message': '', 'success': true};
+      } else if (decPlayingSong['error'] == 'spotify_not_connected') {
+        return {'error_message': 'spotify_not_connected', 'success': false};
+      }
+      return {'error_message': 'Something went wrong', 'success': false};
     } on Exception catch (_) {
       return {'error_message': 'No connection to Spotify', 'success': false};
     }
