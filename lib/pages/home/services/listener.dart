@@ -52,10 +52,15 @@ class SocketListener {
                 if (response['detail'] == 'listen_together_started') {
                   showSheetCallback(response);
                 }
+                if (response['detail'] == 'joined') {
+                  showSheetCallback(response);
+                }
               }
             } else {
               if (response['code'] == 'response') {
                 if (response['error'] == 'invalid_room_id') {
+                  showSheetCallback(response);
+                } else if (response['detail'] == 'room_doesnt_exist') {
                   showSheetCallback(response);
                 }
               }
@@ -120,10 +125,18 @@ class SocketListener {
   }
 
   static void showSheetCallback(callback) {
+    moveNameBack(setModalState);
     if (callback['error'] == 'invalid_room_id') {
-      moveNameBack(setModalState);
-      showError('ID already exists');
-    } else if (callback['detail'] == 'listen_together_started') {
+      if (callback['detail'] == 'start') {
+        showError(setModalState, 'ID already exists');
+      } else {
+        showError(setModalState, 'Please try later again');
+      }
+    } else if (callback['detail'] == 'room_doesnt_exist') {
+      showError(setModalState, 'ID doesnt exist');
+    } else if (callback['detail'] == 'listen_together_started' ||
+        callback['detail'] == 'joined') {
+      showError(setModalState, '');
       closeSheet();
     }
   }

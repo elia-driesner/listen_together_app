@@ -61,6 +61,7 @@ class CustomBottomSheet {
     id = id.toString();
     if (checkID(id) == true) {
       moveName(setModalState);
+      Future.delayed(const Duration(milliseconds: 1000));
       Websocket.channel.sink
           .add(jsonEncode({'request': 'start_listen_together', 'id': id}));
     } else {
@@ -69,8 +70,21 @@ class CustomBottomSheet {
     }
   }
 
+  static void join(setModalState, id) async {
+    id = id.toString();
+    if (checkID(id) == true) {
+      moveName(setModalState);
+      Future.delayed(const Duration(milliseconds: 1000));
+      Websocket.channel.sink
+          .add(jsonEncode({'request': 'join_listen_together', 'id': id}));
+    } else {
+      setModalState(
+          () => {loadingIndicator = null, errorMessage = 'Invalid ID'});
+    }
+  }
+
   static void showError(setModalState, message) {
-    setModalState(() => errorMessage = message);
+    setModalState(() => {errorMessage = message, loadingIndicator = null});
   }
 
   static void setSheetLoadingIndicator(setModalState, state) {
@@ -191,7 +205,8 @@ class CustomBottomSheet {
                                             .toDouble()
                                       ],
                                       'Join',
-                                      () => Navigator.pop(context),
+                                      () => join(
+                                          setModalState, idController.text),
                                     )),
                               ],
                             )

@@ -1,13 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:listen_together_app/pages/listen_together/listen_together.dart';
 import 'package:listen_together_app/services/data/secure_storage.dart';
 import 'package:listen_together_app/services/data/storage.dart';
 import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:listen_together_app/pages/settings/settings.dart';
-import 'package:websockets/websockets.dart';
-import 'package:authentication/authentication.dart';
 import 'package:listen_together_app/services/functions/functions.dart';
 import 'bottom_sheet.dart';
 import './../services/listener.dart';
