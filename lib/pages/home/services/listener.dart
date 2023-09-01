@@ -90,6 +90,11 @@ class SocketListener {
     }
   }
 
+  static Future<void> leaveRoom() async {
+    Websocket.channel.sink
+        .add(jsonEncode({"request": "leave_listen_together"}));
+  }
+
   static void reconnect(username) async {
     bool tryAgain = true;
     var _tokens = await SecureStorage.getTokens();

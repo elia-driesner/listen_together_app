@@ -155,25 +155,39 @@ class _HomepageState extends State<Homepage> {
                   )
                 : Container(),
             SafeArea(
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  margin: const EdgeInsets.fromLTRB(0, 0, 15, 0),
-                  child: IconButton(
-                      onPressed: () => {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SettingsPage(),
-                              ),
-                            )
-                          },
-                      icon: const Icon(
-                        Icons.more_horiz,
-                        size: 30,
-                        color: Colors.grey,
-                      )),
-                ),
+              child: Container(
+                margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        child: IconButton(
+                            onPressed: () => {SocketListener.leaveRoom()},
+                            icon: Icon(
+                              Icons.exit_to_app,
+                              size: 30,
+                              color: Theme.of(context).colorScheme.error,
+                            )),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                        child: IconButton(
+                            onPressed: () => {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SettingsPage(),
+                                    ),
+                                  )
+                                },
+                            icon: const Icon(
+                              Icons.more_horiz,
+                              size: 30,
+                              color: Colors.grey,
+                            )),
+                      ),
+                    ]),
               ),
             ),
             SafeArea(
