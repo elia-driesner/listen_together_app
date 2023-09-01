@@ -10,7 +10,7 @@ class SocketListener {
   static late Function setLoadingIndicator;
   static late Function showSongData;
   static late Function removeSongData;
-  static late Function setTitle;
+  static late Function showLoading;
 
   static late Function showError;
   static late Function moveNameBack;
@@ -18,12 +18,11 @@ class SocketListener {
   static late Function closeSheet;
 
   static Future<void> initHome(setFadeColorsFunc, setLoadingIndicatorFunc,
-      showSongDataFunc, removeSongDataFunc, setTitleFunc) async {
+      showSongDataFunc, removeSongDataFunc) async {
     setFadeColors = setFadeColorsFunc;
     setLoadingIndicator = setLoadingIndicatorFunc;
     showSongData = showSongDataFunc;
     removeSongData = removeSongDataFunc;
-    setTitle = setTitleFunc;
   }
 
   static Future<void> initSheet(showErrorFunc, moveNameBackFunc,
@@ -67,12 +66,12 @@ class SocketListener {
             }
           },
           onDone: () {
-            setTitle('Loading');
+            removeSongData();
             reconnect(username);
           },
         );
       } on Exception {
-        setTitle('Loading');
+        removeSongData();
         reconnect(username);
       }
     } else {

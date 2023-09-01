@@ -70,13 +70,9 @@ class _HomepageState extends State<Homepage> {
         });
   }
 
-  void setTitle(title) {
-    setState(() => song_data['title'] = title);
-  }
-
   void checkLogin(context) async {
-    await SocketListener.initHome(setFadeColors, setLoadingIndicator,
-        showSongData, removeSongData, setTitle);
+    await SocketListener.initHome(
+        setFadeColors, setLoadingIndicator, showSongData, removeSongData);
     var userData = await SecureStorage.getUserData();
     var _tokens = await SecureStorage.getTokens();
     Map tokens = {};
