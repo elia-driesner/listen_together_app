@@ -11,6 +11,7 @@ class SocketListener {
   static late Function showSongData;
   static late Function removeSongData;
   static late Function showLoading;
+  static late Function setRoomWidgets;
 
   static late Function showError;
   static late Function moveNameBack;
@@ -18,11 +19,12 @@ class SocketListener {
   static late Function closeSheet;
 
   static Future<void> initHome(setFadeColorsFunc, setLoadingIndicatorFunc,
-      showSongDataFunc, removeSongDataFunc) async {
+      showSongDataFunc, removeSongDataFunc, setRoomWidgetsFunc) async {
     setFadeColors = setFadeColorsFunc;
     setLoadingIndicator = setLoadingIndicatorFunc;
     showSongData = showSongDataFunc;
     removeSongData = removeSongDataFunc;
+    setRoomWidgets = setRoomWidgetsFunc;
   }
 
   static Future<void> initSheet(showErrorFunc, moveNameBackFunc,
@@ -37,8 +39,7 @@ class SocketListener {
     var channel = Websocket.channel;
     if (channel != null) {
       try {
-        channel.sink.add(
-            jsonEncode({"request": "start_song_loop", "username": username}));
+        channel.sink.add(jsonEncode({"request": "start_song_loop"}));
 
         channel.stream.listen(
           (response) {
@@ -144,6 +145,7 @@ class SocketListener {
       showError(setModalState, 'ID doesnt exist');
     } else if (callback['detail'] == 'listen_together_started' ||
         callback['detail'] == 'joined') {
+      setRoomWidgets();
       showError(setModalState, '');
       closeSheet();
     }

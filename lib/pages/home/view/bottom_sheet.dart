@@ -5,6 +5,7 @@ import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:listen_together_app/services/functions/functions.dart';
 import 'package:websockets/websockets.dart';
 import './../services/listener.dart';
+import 'package:listen_together_app/services/data/storage.dart';
 
 class CustomBottomSheet {
   static TextEditingController idController = TextEditingController();
@@ -14,6 +15,7 @@ class CustomBottomSheet {
   static String errorMessage = '';
   static Widget? loadingIndicator;
   static String roomID = '';
+  static bool shouldReloadTextField = true;
 
   static late var homeContext;
 
@@ -52,6 +54,7 @@ class CustomBottomSheet {
           return false;
         }
       }
+      Storage.saveData({'id': id.toString()}, 'lastUsedRoomID');
       return true;
     }
     return false;
@@ -96,7 +99,19 @@ class CustomBottomSheet {
   }
 
   static void close() {
+    shouldReloadTextField = true;
     Navigator.pop(homeContext);
+  }
+
+  static void setInitalValue(setModalState) {
+    if (shouldReloadTextField == true) {
+      var data = Storage.getData('lastUsedRoomID');
+      debugPrint(data.toString());
+      if (data != null) {
+        setModalState(() => idController.text = data['id']);
+      }
+      shouldReloadTextField = false;
+    }
   }
 
   static Future build(BuildContext context) {
@@ -113,6 +128,7 @@ class CustomBottomSheet {
               builder: (BuildContext context, StateSetter setModalState) {
             SocketListener.initSheet(
                 showError, moveNameBack, setModalState, close);
+            setInitalValue(setModalState);
             return Padding(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom),

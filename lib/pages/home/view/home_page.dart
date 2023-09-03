@@ -30,10 +30,18 @@ class _HomepageState extends State<Homepage> {
   String errorMessage = '';
   Widget? loadingIndicator;
   bool stopListening = false;
-  late StreamSubscription subscription;
+  bool isInRoom = false;
 
   void setFadeColors(colors) {
     setState(() => song_data['fade_colors'] = colors);
+  }
+
+  void setRoomWidgets([state]) {
+    if (state == null) {
+      setState(() => isInRoom = true);
+    } else {
+      setState(() => isInRoom = false);
+    }
   }
 
   void setLoadingIndicator(state) {
@@ -77,8 +85,8 @@ class _HomepageState extends State<Homepage> {
   }
 
   void checkLogin(context) async {
-    await SocketListener.initHome(
-        setFadeColors, setLoadingIndicator, showSongData, removeSongData);
+    await SocketListener.initHome(setFadeColors, setLoadingIndicator,
+        showSongData, removeSongData, setRoomWidgets);
     var userData = await SecureStorage.getUserData();
     var _tokens = await SecureStorage.getTokens();
     Map tokens = {};
@@ -164,13 +172,18 @@ class _HomepageState extends State<Homepage> {
                     children: [
                       Container(
                         margin: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                        child: IconButton(
-                            onPressed: () => {SocketListener.leaveRoom()},
-                            icon: Icon(
-                              Icons.exit_to_app,
-                              size: 30,
-                              color: Theme.of(context).colorScheme.error,
-                            )),
+                        child: isInRoom == true
+                            ? IconButton(
+                                onPressed: () => {
+                                      SocketListener.leaveRoom(),
+                                      setState(() => isInRoom = false)
+                                    },
+                                icon: Icon(
+                                  Icons.exit_to_app,
+                                  size: 30,
+                                  color: Theme.of(context).colorScheme.error,
+                                ))
+                            : const SizedBox(width: 1, height: 1),
                       ),
                       Container(
                         margin: const EdgeInsets.fromLTRB(0, 0, 15, 0),

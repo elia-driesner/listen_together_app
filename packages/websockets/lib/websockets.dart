@@ -40,7 +40,6 @@ class Websocket {
           }
         };
       } else {
-        debugPrint(decodedTicket.toString());
         return {'data': decodedTicket['data'], 'success': true};
       }
     } on Exception catch (_) {
@@ -53,15 +52,14 @@ class Websocket {
     Map ticket = await getTicket(tokens);
     if (ticket['success'] == true) {
       channel = await WebSocketChannel.connect(
-        Uri.parse(serverUrl + playingSongUrl + '?ticket=' + ticket['data']),
+        Uri.parse('$serverUrl$playingSongUrl?ticket=' + ticket['data']),
       );
     } else {
       if (ticket['tokens'] != null) {
         Map newTicket = await getTicket(ticket['tokens']);
         if (newTicket['success'] == true) {
           channel = await WebSocketChannel.connect(
-            Uri.parse(
-                serverUrl + playingSongUrl + '?ticket=' + newTicket['data']),
+            Uri.parse('$serverUrl$playingSongUrl?ticket=' + newTicket['data']),
           );
         }
       }
