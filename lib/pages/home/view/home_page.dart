@@ -57,10 +57,16 @@ class _HomepageState extends State<Homepage> {
     });
   }
 
-  void removeSongData() {
+  void removeSongData([title]) {
+    if (title == null) {
+      loadingIndicator = getLoadingIndicator();
+      title = 'No Connection';
+    } else {
+      loadingIndicator = null;
+    }
     setState(() => {
-          loadingIndicator = getLoadingIndicator(),
-          song_data['title'] = 'No Connection',
+          loadingIndicator = loadingIndicator,
+          song_data['title'] = title,
           song_data['artist'] = '',
           song_data['cover'] = '',
           song_data['fade_colors'] = [

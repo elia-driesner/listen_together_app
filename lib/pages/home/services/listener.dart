@@ -46,7 +46,11 @@ class SocketListener {
             debugPrint(response.toString());
             if (response['success'] == true) {
               if (response['code'] == 'playing_song') {
-                showSong(response['data']);
+                if (response['detail'] != 'not_playing') {
+                  showSong(response['data']);
+                } else {
+                  removeSongData('Spotify not playing');
+                }
               } else if (response['code'] == 'response') {
                 if (response['detail'] == 'listen_together_started') {
                   showSheetCallback(response);
@@ -102,6 +106,7 @@ class SocketListener {
       tokens = _tokens;
     }
     while (tryAgain) {
+      debugPrint('reconnect');
       var connection = await Authentication.checkConnection();
       if (connection == true) {
         tryAgain = false;
@@ -116,9 +121,8 @@ class SocketListener {
           }
         }
         listen(username, tokens);
-      } else {
-        Future.delayed(const Duration(milliseconds: 200));
       }
+      await Future.delayed(const Duration(milliseconds: 200));
     }
   }
 
