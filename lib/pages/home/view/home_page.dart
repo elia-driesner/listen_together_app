@@ -31,6 +31,7 @@ class _HomepageState extends State<Homepage> {
   Widget? loadingIndicator;
   bool stopListening = false;
   bool isInRoom = false;
+  Map roomInfo = {'room_name': ''};
 
   void setFadeColors(colors) {
     setState(() => song_data['fade_colors'] = colors);
@@ -84,8 +85,10 @@ class _HomepageState extends State<Homepage> {
         });
   }
 
-  void showRoomInfo(roomInfo) {
-    debugPrint(roomInfo.toString());
+  void showRoomInfo(room_info) {
+    setState(() {
+      roomInfo = room_info;
+    });
   }
 
   void checkLogin(context) async {
@@ -189,6 +192,17 @@ class _HomepageState extends State<Homepage> {
                                 ))
                             : const SizedBox(width: 1, height: 1),
                       ),
+                      Container(
+                          child: isInRoom == true
+                              ? Text(roomInfo['room_name'],
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).primaryColorLight,
+                                      fontSize: 22))
+                              : const SizedBox(
+                                  width: 1,
+                                  height: 1,
+                                )),
                       Container(
                         margin: const EdgeInsets.fromLTRB(0, 0, 15, 0),
                         child: IconButton(
