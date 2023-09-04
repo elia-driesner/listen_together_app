@@ -12,19 +12,26 @@ class SocketListener {
   static late Function removeSongData;
   static late Function showLoading;
   static late Function setRoomWidgets;
+  static late Function showRoomInfo;
 
   static late Function showError;
   static late Function moveNameBack;
   static late Function setModalState;
   static late Function closeSheet;
 
-  static Future<void> initHome(setFadeColorsFunc, setLoadingIndicatorFunc,
-      showSongDataFunc, removeSongDataFunc, setRoomWidgetsFunc) async {
+  static Future<void> initHome(
+      setFadeColorsFunc,
+      setLoadingIndicatorFunc,
+      showSongDataFunc,
+      removeSongDataFunc,
+      setRoomWidgetsFunc,
+      showRoomInfoFunc) async {
     setFadeColors = setFadeColorsFunc;
     setLoadingIndicator = setLoadingIndicatorFunc;
     showSongData = showSongDataFunc;
     removeSongData = removeSongDataFunc;
     setRoomWidgets = setRoomWidgetsFunc;
+    showRoomInfo = showRoomInfoFunc;
   }
 
   static Future<void> initSheet(showErrorFunc, moveNameBackFunc,
@@ -48,7 +55,12 @@ class SocketListener {
             if (response['success'] == true) {
               if (response['code'] == 'playing_song') {
                 if (response['detail'] != 'not_playing') {
-                  showSong(response['data']);
+                  if (response['detail'] == 'song_loop') {
+                    showSong(response['data']);
+                  } else if (response['detail'] == 'listen_together') {
+                    showRoomInfo(response['info']);
+                    showSong(response['data']);
+                  }
                 } else {
                   removeSongData('Spotify not playing');
                 }

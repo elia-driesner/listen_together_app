@@ -106,7 +106,6 @@ class CustomBottomSheet {
   static void setInitalValue(setModalState) {
     if (shouldReloadTextField == true) {
       var data = Storage.getData('lastUsedRoomID');
-      debugPrint(data.toString());
       if (data != null) {
         setModalState(() => idController.text = data['id']);
       }

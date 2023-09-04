@@ -84,9 +84,13 @@ class _HomepageState extends State<Homepage> {
         });
   }
 
+  void showRoomInfo(roomInfo) {
+    debugPrint(roomInfo.toString());
+  }
+
   void checkLogin(context) async {
     await SocketListener.initHome(setFadeColors, setLoadingIndicator,
-        showSongData, removeSongData, setRoomWidgets);
+        showSongData, removeSongData, setRoomWidgets, showRoomInfo);
     var userData = await SecureStorage.getUserData();
     var _tokens = await SecureStorage.getTokens();
     Map tokens = {};
