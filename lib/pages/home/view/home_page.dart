@@ -6,6 +6,7 @@ import 'package:listen_together_app/widgets/widgets.dart';
 import 'package:listen_together_app/pages/settings/settings.dart';
 import 'package:listen_together_app/services/functions/functions.dart';
 import 'bottom_sheet.dart';
+import 'room_info_sheet.dart';
 import './../services/listener.dart';
 
 class Homepage extends StatefulWidget {
@@ -281,11 +282,20 @@ class _HomepageState extends State<Homepage> {
                           MediaQuery.of(context).size.height * 0.05,
                           0,
                           MediaQuery.of(context).size.height * 0.02),
-                      child: AccentButton([
-                        (MediaQuery.of(context).size.width * 0.8).toDouble(),
-                        (MediaQuery.of(context).size.height * 0.062).toDouble()
-                      ], 'Listen Together',
-                          () => CustomBottomSheet.build(context))),
+                      child: AccentButton(
+                          [
+                            (MediaQuery.of(context).size.width * 0.8)
+                                .toDouble(),
+                            (MediaQuery.of(context).size.height * 0.062)
+                                .toDouble()
+                          ],
+                          isInRoom == false ? 'Listen Together' : 'Room Info',
+                          () => {
+                                if (isInRoom == false)
+                                  {CustomBottomSheet.build(context)}
+                                else
+                                  {RoomView.build(context)}
+                              })),
                 ],
               ),
             ),
