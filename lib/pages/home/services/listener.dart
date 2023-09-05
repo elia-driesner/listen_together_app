@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:listen_together_app/services/data/secure_storage.dart';
 import 'package:authentication/authentication.dart';
 import 'package:websockets/websockets.dart';
+import 'package:listen_together_app/services/data/storage.dart';
 
 class SocketListener {
   static late Function setFadeColors;
@@ -21,6 +22,7 @@ class SocketListener {
 
   static late Function setInfoState;
   static late Function addInfo;
+  static bool infoSheetInitialized = false;
 
   static Future<void> initHome(
       setFadeColorsFunc,
@@ -46,6 +48,7 @@ class SocketListener {
   }
 
   static Future<void> initInfoSheet(setInfoStateFunc, addInfoFunc) async {
+    infoSheetInitialized = true;
     setInfoState = setInfoStateFunc;
     addInfo = addInfoFunc;
   }
@@ -67,6 +70,10 @@ class SocketListener {
                     showSong(response['data']);
                   } else if (response['detail'] == 'listen_together') {
                     showRoomInfo(response['info']);
+                    Storage.saveData(response['info'], 'roomInfo');
+                    if (infoSheetInitialized) {
+                      addInfo(setInfoState, response['info']);
+                    }
                     showSong(response['data']);
                   }
                 } else {
