@@ -19,6 +19,9 @@ class SocketListener {
   static late Function setModalState;
   static late Function closeSheet;
 
+  static late Function setInfoState;
+  static late Function addInfo;
+
   static Future<void> initHome(
       setFadeColorsFunc,
       setLoadingIndicatorFunc,
@@ -40,6 +43,11 @@ class SocketListener {
     moveNameBack = moveNameBackFunc;
     setModalState = setModalStateFunc;
     closeSheet = closeSheetFunc;
+  }
+
+  static Future<void> initInfoSheet(setInfoStateFunc, addInfoFunc) async {
+    setInfoState = setInfoStateFunc;
+    addInfo = addInfoFunc;
   }
 
   static void listen(username, tokens) {
