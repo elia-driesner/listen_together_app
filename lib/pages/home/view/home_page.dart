@@ -42,7 +42,10 @@ class _HomepageState extends State<Homepage> {
     if (state == null) {
       setState(() => isInRoom = true);
     } else {
-      setState(() => isInRoom = false);
+      setState(() => {
+            isInRoom = false,
+            {'room_name': ''}
+          });
     }
   }
 

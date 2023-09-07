@@ -86,6 +86,9 @@ class SocketListener {
                 if (response['detail'] == 'joined') {
                   showSheetCallback(response);
                 }
+                if (response['detail'] == 'room_closed') {
+                  setRoomWidgets(false);
+                }
               }
             } else {
               if (response['code'] == 'response') {
