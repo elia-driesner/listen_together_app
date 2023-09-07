@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:listen_together_app/services/data/storage.dart';
 import './../services/listener.dart';
+import '../room_info.dart';
 
 class RoomView {
   static bool hasInfo = false;
   static late var homeContext;
 
-  static var storageReturn = Storage.getData('roomInfo');
-  static Map roomInfo = storageReturn!;
+  static Map roomInfo = roomInfoVar;
 
   static void addInfo(setInfoState, info) {
+    debugPrint(info.toString());
     setInfoState(() => {roomInfo = info, hasInfo = true});
   }
 

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:listen_together_app/services/data/secure_storage.dart';
 import 'package:authentication/authentication.dart';
 import 'package:websockets/websockets.dart';
-import 'package:listen_together_app/services/data/storage.dart';
+import '../room_info.dart';
 
 class SocketListener {
   static late Function setFadeColors;
@@ -70,7 +70,7 @@ class SocketListener {
                     showSong(response['data']);
                   } else if (response['detail'] == 'listen_together') {
                     showRoomInfo(response['info']);
-                    Storage.saveData(response['info'], 'roomInfo');
+                    roomInfoVar = response['info'];
                     if (infoSheetInitialized) {
                       addInfo(setInfoState, response['info']);
                     }
@@ -85,9 +85,14 @@ class SocketListener {
                 }
                 if (response['detail'] == 'joined') {
                   showSheetCallback(response);
+                  roomInfoVar = response['data'];
+                  if (infoSheetInitialized) {
+                    addInfo(setInfoState, response['info']);
+                  }
                 }
                 if (response['detail'] == 'room_closed') {
                   setRoomWidgets(false);
+                  infoSheetInitialized = false;
                 }
               }
             } else {
@@ -136,6 +141,8 @@ class SocketListener {
     if (_tokens != null) {
       tokens = _tokens;
     }
+    setRoomWidgets(false);
+    infoSheetInitialized = false;
     while (tryAgain) {
       debugPrint('reconnect');
       var connection = await Authentication.checkConnection();
