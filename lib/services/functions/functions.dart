@@ -8,7 +8,8 @@ import 'package:listen_together_app/services/data/storage.dart';
 Widget getLoadingIndicator() {
   Widget loadingIndicator;
   if (Platform.isAndroid) {
-    loadingIndicator = const CircularProgressIndicator();
+    loadingIndicator = const CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
   } else {
     loadingIndicator = const CupertinoActivityIndicator(radius: 18);
   }

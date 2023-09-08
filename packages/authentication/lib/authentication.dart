@@ -192,13 +192,9 @@ class Authentication {
   }
 
   static Future<bool> checkConnection() async {
-    try {
-      await http.get(
-        Uri.parse(serverUrl),
-      );
-    } on Exception catch (_) {
-      return (false);
-    }
+    await http.get(
+      Uri.parse(serverUrl),
+    );
 
     return (true);
   }

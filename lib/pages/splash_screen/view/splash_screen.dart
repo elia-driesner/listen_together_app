@@ -22,6 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void loadApp() async {
     while (true) {
       bool connection = await Authentication.checkConnection();
+      debugPrint(connection.toString());
       if (connection) {
         break;
       } else {
